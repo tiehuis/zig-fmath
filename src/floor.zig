@@ -1,8 +1,48 @@
 const fmath = @import("index.zig");
 
-const toint = 1.0 / fmath.f64_epsilon;
+pub fn floor(comptime T: type, x: T) -> T {
+    fmath.assert(@typeId(T) == fmath.TypeId.Float);
+    if (T == f32) {
+        floor32(x)
+    } else if (T == f64) {
+        floor64(x)
+    } else if (T == c_longdouble) {
+        @compileError("floor unimplemented for c_longdouble");
+    } else {
+        unreachable;
+    }
+}
 
-pub fn floor(x: f64) -> f64 {
+fn floor32(x: f32) -> f32 {
+    var u = fmath.bitCast(u32, x);
+    const e = i32((u >> 23) & 0xFF) - 0x7F;
+    var m: u32 = undefined;
+
+    if (e >= 23) {
+        return x;
+    }
+
+    if (e >= 0) {
+        m = 0x007FFFFF >> u32(e);
+        if (u & m == 0) {
+            return x;
+        }
+        fmath.forceEval(x + 0x1.0p120);
+        if (u >> 31 != 0) {
+            u += m;
+        }
+        fmath.bitCast(f32, u & ~m)
+    } else {
+        fmath.forceEval(x + 0x1.0p120);
+        if (u >> 31 == 0) {
+            return 0.0; // Compiler requires return
+        } else {
+            -1.0
+        }
+    }
+}
+
+fn floor64(x: f64) -> f64 {
     const u = fmath.bitCast(u64, x);
     const e = (u >> 52) & 0x7FF;
     var y: f64 = undefined;
@@ -12,9 +52,9 @@ pub fn floor(x: f64) -> f64 {
     }
 
     if (u >> 63 != 0) {
-        y = x - toint + toint - x;
+        y = x - fmath.f64_toint + fmath.f64_toint - x;
     } else {
-        y = x + toint - toint - x;
+        y = x + fmath.f64_toint - fmath.f64_toint - x;
     }
 
     if (e <= 0x3FF-1) {
@@ -31,8 +71,14 @@ pub fn floor(x: f64) -> f64 {
     }
 }
 
-test "floor" {
-    fmath.assert(floor(1.3) == 1.0);
-    fmath.assert(floor(-1.3) == -2.0);
-    fmath.assert(floor(0.2) == 0.0);
+test "floor32" {
+    fmath.assert(floor32(1.3) == 1.0);
+    fmath.assert(floor32(-1.3) == -2.0);
+    fmath.assert(floor32(0.2) == 0.0);
+}
+
+test "floor64" {
+    fmath.assert(floor64(1.3) == 1.0);
+    fmath.assert(floor64(-1.3) == -2.0);
+    fmath.assert(floor64(0.2) == 0.0);
 }

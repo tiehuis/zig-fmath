@@ -1,7 +1,7 @@
 const std = @import("std");
 const builtin = @import("builtin");
-const TypeId = builtin.TypeId;
 
+pub const TypeId = builtin.TypeId;
 pub const printf = std.io.stdout.printf;
 pub const assert = std.debug.assert;
 
@@ -24,6 +24,13 @@ pub const f64_true_min = 4.94065645841246544177e-324;
 pub const f64_min = 2.22507385850720138309e-308;
 pub const f64_max = 1.79769313486231570815e+308;
 pub const f64_epsilon = 2.22044604925031308085e-16;
+pub const f64_toint = 1.0 / f64_epsilon;
+
+pub const f32_true_min = 1.40129846432481707092e-45;
+pub const f32_min = 1.17549435082228750797e-38;
+pub const f32_max = 3.40282346638528859812e+38;
+pub const f32_epsilon = 1.1920928955078125e-07;
+pub const f32_toint = 1.0 / f32_epsilon;
 
 // Insufficient comptime support for floating points cast?
 pub const nan_u64 = u64((0x7FF << 52) | 1);

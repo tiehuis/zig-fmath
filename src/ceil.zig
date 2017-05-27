@@ -1,8 +1,48 @@
 const fmath = @import("index.zig");
 
-const toint = 1.0 / fmath.f64_epsilon;
+pub fn ceil(comptime T: type, x: T) -> T {
+    fmath.assert(@typeId(T) == fmath.TypeId.Float);
+    if (T == f32) {
+        ceil32(x)
+    } else if (T == f64) {
+        ceil64(x)
+    } else if (T == c_longdouble) {
+        @compileError("ceil unimplemented for c_longdouble");
+    } else {
+        unreachable;
+    }
+}
 
-pub fn ceil(x: f64) -> f64 {
+fn ceil32(x: f32) -> f32 {
+    var u = fmath.bitCast(u32, x);
+    var e = i32((u >> 23) & 0xFF) - 0x7F;
+    var m: u32 = undefined;
+
+    if (e >= 23) {
+        return x;
+    }
+    else if (e >= 0) {
+        m = 0x007FFFFF >> u32(e);
+        if (u & m == 0) {
+            return x;
+        }
+        fmath.forceEval(x + 0x1.0p120);
+        if (u >> 31 == 0) {
+            u += m;
+        }
+        u &= ~m;
+        fmath.bitCast(f32, u)
+    } else {
+        fmath.forceEval(x + 0x1.0p120);
+        if (u >> 31 != 0) {
+            return -0.0;
+        } else {
+            1.0
+        }
+    }
+}
+
+fn ceil64(x: f64) -> f64 {
     const u = fmath.bitCast(u64, x);
     const e = (u >> 52) & 0x7FF;
     var y: f64 = undefined;
@@ -12,9 +52,9 @@ pub fn ceil(x: f64) -> f64 {
     }
 
     if (u >> 63 != 0) {
-        y = x - toint + toint - x;
+        y = x - fmath.f64_toint + fmath.f64_toint - x;
     } else {
-        y = x + toint - toint - x;
+        y = x + fmath.f64_toint - fmath.f64_toint - x;
     }
 
     if (e <= 0x3FF-1) {
@@ -31,8 +71,14 @@ pub fn ceil(x: f64) -> f64 {
     }
 }
 
-test "ceil" {
-    fmath.assert(ceil(1.3) == 2.0);
-    fmath.assert(ceil(-1.3) == -1.0);
-    fmath.assert(ceil(0.2) == 1.0);
+test "ceil32" {
+    fmath.assert(ceil32(1.3) == 2.0);
+    fmath.assert(ceil32(-1.3) == -1.0);
+    fmath.assert(ceil32(0.2) == 1.0);
+}
+
+test "ceil64" {
+    fmath.assert(ceil64(1.3) == 2.0);
+    fmath.assert(ceil64(-1.3) == -1.0);
+    fmath.assert(ceil64(0.2) == 1.0);
 }
