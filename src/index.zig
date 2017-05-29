@@ -39,8 +39,16 @@ pub const nan = @import("nan.zig").nan;
 pub const inf = @import("inf.zig").inf;
 
 pub fn forceEval(value: var) {
-    var _ = value;
-    // Should evaluate the input expression for its side-effects and not be optimized out.
+    const ty = @typeOf(value);
+
+    // TODO: Volatile variable declaration?
+    if (@sizeOf(ty) == @sizeOf(f32)) {
+        const x: f32 = value;
+    } else if (@sizeOf(ty) == @sizeOf(f64)) {
+        const x: f64 = value;
+    } else {
+        @compileError("input forceEval width error");
+    }
 }
 
 pub fn bitCast(comptime DestType: type, value: var) -> DestType {
@@ -48,8 +56,11 @@ pub fn bitCast(comptime DestType: type, value: var) -> DestType {
     return *@ptrCast(&const DestType, &value);
 }
 
+pub fn approxEq(comptime T: type, x: T, y: T, epsilon: T) -> bool {
+    assert(@typeId(T) == TypeId.Float);
+    fabs(T, x - y) < epsilon
+}
 
-// Re-export all internal functions
 pub const isnan = @import("isnan.zig").isnan;
 pub const fabs = @import("fabs.zig").fabs;
 pub const ceil = @import("ceil.zig").ceil;
@@ -61,8 +72,11 @@ pub const isinf = @import("isinf.zig").isinf;
 pub const isnormal = @import("isnormal.zig").isnormal;
 pub const signbit = @import("signbit.zig").signbit;
 pub const scalbn = @import("scalbn.zig").scalbn;
+pub const sqrt = @import("sqrt.zig").sqrt;
+pub const cbrt = @import("cbrt.zig").cbrt;
+pub const acos = @import("acos.zig").acos;
+pub const asin = @import("asin.zig").asin;
 
-// Re-export all functions
 test "fmath" {
     _ = @import("nan.zig");
     _ = @import("isnan.zig");
@@ -76,4 +90,8 @@ test "fmath" {
     _ = @import("isnormal.zig");
     _ = @import("signbit.zig");
     _ = @import("scalbn.zig");
+    _ = @import("sqrt.zig");
+    _ = @import("cbrt.zig");
+    _ = @import("acos.zig");
+    _ = @import("asin.zig");
 }
