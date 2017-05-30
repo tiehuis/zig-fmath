@@ -83,6 +83,9 @@ pub const log2 = @import("log2.zig").log2;
 pub const log10 = @import("log10.zig").log10;
 pub const log1p = @import("log1p.zig").log1p;
 pub const fma = @import("fma.zig").fma;
+pub const asinh = @import("asinh.zig").asinh;
+pub const acosh = @import("acosh.zig").acosh;
+pub const atanh = @import("atanh.zig").atanh;
 
 test "fmath" {
     _ = @import("nan.zig");
@@ -108,4 +111,7 @@ test "fmath" {
     _ = @import("log10.zig");
     _ = @import("log1p.zig");
     _ = @import("fma.zig");
+    _ = @import("asinh.zig");
+    _ = @import("acosh.zig");
+    _ = @import("atanh.zig");
 }
