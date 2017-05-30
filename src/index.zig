@@ -81,6 +81,7 @@ pub const exp = @import("exp.zig").exp;
 pub const log = @import("log.zig").log;
 pub const log2 = @import("log2.zig").log2;
 pub const log10 = @import("log10.zig").log10;
+pub const log1p = @import("log1p.zig").log1p;
 pub const fma = @import("fma.zig").fma;
 
 test "fmath" {
@@ -105,5 +106,6 @@ test "fmath" {
     _ = @import("log.zig");
     _ = @import("log2.zig");
     _ = @import("log10.zig");
+    _ = @import("log1p.zig");
     _ = @import("fma.zig");
 }
