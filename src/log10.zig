@@ -5,9 +5,9 @@ pub fn log10(comptime T: type, x: T) -> T {
     if (T == f32) {
         log10f(x)
     } else if (T == f64) {
-        @compileError("log unimplemented for f64");
+        @compileError("log10 unimplemented for f64");
     } else if (T == c_longdouble) {
-        @compileError("log unimplemented for c_longdouble");
+        @compileError("log10 unimplemented for c_longdouble");
     } else {
         unreachable;
     }

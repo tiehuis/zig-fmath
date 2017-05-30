@@ -5,9 +5,9 @@ pub fn log2(comptime T: type, x: T) -> T {
     if (T == f32) {
         log2f(x)
     } else if (T == f64) {
-        @compileError("log unimplemented for f64");
+        @compileError("log2 unimplemented for f64");
     } else if (T == c_longdouble) {
-        @compileError("log unimplemented for c_longdouble");
+        @compileError("log2 unimplemented for c_longdouble");
     } else {
         unreachable;
     }

@@ -5,9 +5,9 @@ pub fn log1p(comptime T: type, x: T) -> T {
     if (T == f32) {
         log1pf(x)
     } else if (T == f64) {
-        @compileError("log unimplemented for f64");
+        @compileError("log1p unimplemented for f64");
     } else if (T == c_longdouble) {
-        @compileError("log unimplemented for c_longdouble");
+        @compileError("log1p unimplemented for c_longdouble");
     } else {
         unreachable;
     }
