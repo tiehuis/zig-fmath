@@ -76,6 +76,8 @@ pub const sqrt = @import("sqrt.zig").sqrt;
 pub const cbrt = @import("cbrt.zig").cbrt;
 pub const acos = @import("acos.zig").acos;
 pub const asin = @import("asin.zig").asin;
+pub const hypot = @import("hypot.zig").hypot;
+pub const exp = @import("exp.zig").exp;
 
 test "fmath" {
     _ = @import("nan.zig");
@@ -94,4 +96,6 @@ test "fmath" {
     _ = @import("cbrt.zig");
     _ = @import("acos.zig");
     _ = @import("asin.zig");
+    _ = @import("hypot.zig");
+    _ = @import("exp.zig");
 }
