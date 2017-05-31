@@ -61,6 +61,8 @@ pub fn approxEq(comptime T: type, x: T, y: T, epsilon: T) -> bool {
     fabs(T, x - y) < epsilon
 }
 
+pub const io = @import("io.zig");
+
 pub const isnan = @import("isnan.zig").isnan;
 pub const fabs = @import("fabs.zig").fabs;
 pub const ceil = @import("ceil.zig").ceil;
@@ -90,6 +92,7 @@ pub const acosh = @import("acosh.zig").acosh;
 pub const atanh = @import("atanh.zig").atanh;
 
 test "fmath" {
+    _ = @import("io.zig");
     _ = @import("nan.zig");
     _ = @import("isnan.zig");
     _ = @import("fabs.zig");
