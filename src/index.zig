@@ -67,6 +67,7 @@ pub const ceil = @import("ceil.zig").ceil;
 pub const floor = @import("floor.zig").floor;
 pub const trunc = @import("floor.zig").trunc;
 pub const round = @import("round.zig").round;
+pub const copysign = @import("copysign.zig").copysign;
 pub const isfinite = @import("isfinite.zig").isfinite;
 pub const isinf = @import("isinf.zig").isinf;
 pub const isnormal = @import("isnormal.zig").isnormal;
@@ -95,6 +96,7 @@ test "fmath" {
     _ = @import("floor.zig");
     _ = @import("trunc.zig");
     _ = @import("round.zig");
+    _ = @import("copysign.zig");
     _ = @import("isfinite.zig");
     _ = @import("isinf.zig");
     _ = @import("isnormal.zig");
