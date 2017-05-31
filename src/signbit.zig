@@ -1,6 +1,6 @@
 const fmath = @import("index.zig");
 
-pub fn signbit(comptime T: type, x: T) -> T {
+pub fn signbit(comptime T: type, x: T) -> bool {
     fmath.assert(@typeId(T) == fmath.TypeId.Float);
     if (T == f32) {
         signbit32(x)
