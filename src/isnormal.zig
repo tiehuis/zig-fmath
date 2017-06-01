@@ -1,11 +1,28 @@
 const fmath = @import("index.zig");
 
-pub fn isnormal(x: f64) -> bool {
-    const bits = fmath.bitCast(u64, x);
-    (bits + (1 << 52)) & (@maxValue(u64) >> 1) >= (1 << 53)
+pub fn isNormal(x: var) -> bool {
+    const T = @typeOf(x);
+    fmath.assert(@typeId(T) == fmath.TypeId.Float);
+
+    switch (T) {
+        f32 => {
+            const bits = fmath.bitCast(u32, x);
+            (bits + 0x00800000) & 0x7FFFFFFF >= 0x01000000
+        },
+
+        f64 => {
+            const bits = fmath.bitCast(u64, x);
+            (bits + (1 << 52)) & (@maxValue(u64) >> 1) >= (1 << 53)
+        },
+
+        else => {
+            @compileError("isFinite not implemented for " ++ @typeName(T));
+        },
+    }
 }
 
-test "isnormal" {
-    fmath.assert(!isnormal(fmath.nan("")));
-    fmath.assert(isnormal(1.0));
+test "isNormal" {
+    fmath.assert(!isNormal(fmath.nan("")));
+    fmath.assert(isNormal(f32(1.0)));
+    fmath.assert(isNormal(f64(1.0)));
 }

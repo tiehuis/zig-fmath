@@ -63,7 +63,7 @@ pub fn approxEq(comptime T: type, x: T, y: T, epsilon: T) -> bool {
 
 pub const io = @import("io.zig");
 
-pub const isnan = @import("isnan.zig").isnan;
+pub const isNan = @import("isnan.zig").isNan;
 pub const fabs = @import("fabs.zig").fabs;
 pub const ceil = @import("ceil.zig").ceil;
 pub const floor = @import("floor.zig").floor;
@@ -71,9 +71,9 @@ pub const trunc = @import("floor.zig").trunc;
 pub const round = @import("round.zig").round;
 pub const frexp = @import("frexp.zig").frexp;
 pub const copysign = @import("copysign.zig").copysign;
-pub const isfinite = @import("isfinite.zig").isfinite;
-pub const isinf = @import("isinf.zig").isinf;
-pub const isnormal = @import("isnormal.zig").isnormal;
+pub const isFinite = @import("isfinite.zig").isFinite;
+pub const isInf = @import("isinf.zig").isInf;
+pub const isNormal = @import("isnormal.zig").isNormal;
 pub const signbit = @import("signbit.zig").signbit;
 pub const scalbn = @import("scalbn.zig").scalbn;
 pub const sqrt = @import("sqrt.zig").sqrt;
