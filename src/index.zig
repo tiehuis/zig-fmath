@@ -97,6 +97,9 @@ pub const fma = @import("fma.zig").fma;
 pub const asinh = @import("asinh.zig").asinh;
 pub const acosh = @import("acosh.zig").acosh;
 pub const atanh = @import("atanh.zig").atanh;
+pub const sinh = @import("sinh.zig").sinh;
+pub const cosh = @import("cosh.zig").cosh;
+pub const tanh = @import("tanh.zig").tanh;
 
 test "fmath" {
     _ = @import("io.zig");
@@ -130,4 +133,7 @@ test "fmath" {
     _ = @import("asinh.zig");
     _ = @import("acosh.zig");
     _ = @import("atanh.zig");
+    _ = @import("sinh.zig");
+    _ = @import("cosh.zig");
+    _ = @import("tanh.zig");
 }
