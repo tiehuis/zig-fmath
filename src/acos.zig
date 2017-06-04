@@ -1,15 +1,11 @@
 const fmath = @import("index.zig");
 
-pub fn acos(comptime T: type, x: T) -> T {
-    fmath.assert(@typeId(T) == fmath.TypeId.Float);
-    if (T == f32) {
-        acos32(x)
-    } else if (T == f64) {
-        @compileError("acos unimplemented for f64");
-    } else if (T == c_longdouble) {
-        @compileError("acos unimplemented for c_longdouble");
-    } else {
-        unreachable;
+pub fn acos(x: var) -> @typeOf(x) {
+    const T = @typeOf(x);
+    switch (T) {
+        f32 => acos32(x),
+        f64 => unreachable,
+        else => @compileError("acos not implemented for " ++ @typeName(T)),
     }
 }
 
@@ -55,19 +51,23 @@ fn acos32(x: f32) -> f32 {
     // x < -0.5
     if (hx >> 31 != 0) {
         const z = (1 + x) * 0.5;
-        const s = fmath.sqrt(f32, z);
+        const s = fmath.sqrt(z);
         const w = r32(z) * s - pio2_lo;
         return 2 * (pio2_hi - (s + w));
     }
 
     // x > 0.5
     const z = (1 - x) * 0.5;
-    const s = fmath.sqrt(f32, z);
+    const s = fmath.sqrt(z);
     const jx = fmath.bitCast(u32, s);
     const df = fmath.bitCast(f32, jx & 0xFFFFF000);
     const c = (z - df * df) / (s + df);
     const w = r32(z) * s + c;
     2 * (df + w)
+}
+
+test "acos" {
+    fmath.assert(acos(f32(0.0)) == acos32(0.0));
 }
 
 test "acos32" {

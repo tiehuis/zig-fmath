@@ -1,15 +1,11 @@
 const fmath = @import("index.zig");
 
-pub fn ceil(comptime T: type, x: T) -> T {
-    fmath.assert(@typeId(T) == fmath.TypeId.Float);
-    if (T == f32) {
-        ceil32(x)
-    } else if (T == f64) {
-        ceil64(x)
-    } else if (T == c_longdouble) {
-        @compileError("ceil unimplemented for c_longdouble");
-    } else {
-        unreachable;
+pub fn ceil(x: var) -> @typeOf(x) {
+    const T = @typeOf(x);
+    switch (T) {
+        f32 => ceil32(x),
+        f64 => ceil64(x),
+        else => @compileError("ceil not implemented for " ++ @typeName(T)),
     }
 }
 
@@ -69,6 +65,11 @@ fn ceil64(x: f64) -> f64 {
     } else {
         x + y
     }
+}
+
+test "ceil" {
+    fmath.assert(ceil(f32(0.0)) == ceil32(0.0));
+    fmath.assert(ceil(f64(0.0)) == ceil64(0.0));
 }
 
 test "ceil32" {

@@ -33,21 +33,26 @@ pub const f32_epsilon = 1.1920928955078125e-07;
 pub const f32_toint = 1.0 / f32_epsilon;
 
 // Insufficient comptime support for floating points cast?
+pub const nan_u32 = u32(0x7F800001);
+pub const inf_u32 = u32(0x7F800000);
 pub const nan_u64 = u64((0x7FF << 52) | 1);
 pub const inf_u64 = u64(0x7FF << 52);
 pub const nan = @import("nan.zig").nan;
 pub const inf = @import("inf.zig").inf;
 
 pub fn forceEval(value: var) {
-    const ty = @typeOf(value);
-
+    const T = @typeOf(value);
     // TODO: Volatile variable declaration?
-    if (@sizeOf(ty) == @sizeOf(f32)) {
-        const x: f32 = value;
-    } else if (@sizeOf(ty) == @sizeOf(f64)) {
-        const x: f64 = value;
-    } else {
-        @compileError("input forceEval width error");
+    switch (T) {
+        f32 => {
+            const x: f32 = value;
+        },
+        f64 => {
+            const x: f64 = value;
+        },
+        else => {
+            @compileError("forceEval not implemented for " ++ @typeName(T));
+        },
     }
 }
 
@@ -58,7 +63,7 @@ pub fn bitCast(comptime DestType: type, value: var) -> DestType {
 
 pub fn approxEq(comptime T: type, x: T, y: T, epsilon: T) -> bool {
     assert(@typeId(T) == TypeId.Float);
-    fabs(T, x - y) < epsilon
+    fabs(x - y) < epsilon
 }
 
 pub const io = @import("io.zig");

@@ -1,15 +1,10 @@
 const fmath = @import("index.zig");
 
-pub fn fma(comptime T: type, x: T) -> T {
-    fmath.assert(@typeId(T) == fmath.TypeId.Float);
-    if (T == f32) {
-        fma32(x)
-    } else if (T == f64) {
-        @compileError("fma unimplemented for f64");
-    } else if (T == c_longdouble) {
-        @compileError("fma unimplemented for c_longdouble");
-    } else {
-        unreachable;
+pub fn fma(comptime T: type, x: T, y: T, z: T) -> T {
+    switch (T) {
+        f32 => fma32(x, y, z),
+        f64 => unreachable,
+        else => @compileError("acos not implemented for " ++ @typeName(T)),
     }
 }
 
@@ -25,6 +20,10 @@ fn fma32(x: f32, y: f32, z: f32) -> f32 {
         // TODO: Handle inexact case with double-rounding
         f32(xy_z)
     }
+}
+
+test "fma" {
+    fmath.assert(fma(f32, 0.0, 1.0, 1.0) == fma32(0.0, 1.0, 1.0));
 }
 
 test "fma32" {

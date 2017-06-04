@@ -1,15 +1,11 @@
 const fmath = @import("index.zig");
 
-pub fn frexp(comptime T: type, x: T, e: &i32) -> T {
-    fmath.assert(@typeId(T) == fmath.TypeId.Float);
-    if (T == f32) {
-        frexp32(x, e)
-    } else if (T == f64) {
-        frexp64(x, e)
-    } else if (T == c_longdouble) {
-        @compileError("frexp unimplemented for c_longdouble");
-    } else {
-        unreachable;
+pub fn frexp(x: var, e: &i32) -> @typeOf(x) {
+    const T = @typeOf(x);
+    switch (T) {
+        f32 => frexp32(x, e),
+        f64 => frexp64(x, e),
+        else => @compileError("frexp not implemented for " ++ @typeName(T)),
     }
 }
 
@@ -57,6 +53,14 @@ fn frexp64(x_: f64, e: &i32) -> f64 {
     y &= 0x800FFFFFFFFFFFFF;
     y |= 0x3FE0000000000000;
     fmath.bitCast(f64, y)
+}
+
+test "frexp" {
+    var i0: i32 = undefined;
+    var i1: i32 = undefined;
+
+    fmath.assert(frexp(f32(1.3), &i0) == frexp32(1.3, &i1));
+    fmath.assert(frexp(f64(1.3), &i0) == frexp64(1.3, &i1));
 }
 
 test "frexp32" {

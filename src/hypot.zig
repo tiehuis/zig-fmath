@@ -1,15 +1,10 @@
 const fmath = @import("index.zig");
 
 pub fn hypot(comptime T: type, x: T, y: T) -> T {
-    fmath.assert(@typeId(T) == fmath.TypeId.Float);
-    if (T == f32) {
-        hypot32(x, y)
-    } else if (T == f64) {
-        @compileError("hypot unimplemented for f64");
-    } else if (T == c_longdouble) {
-        @compileError("hypot unimplemented for c_longdouble");
-    } else {
-        unreachable;
+    switch (T) {
+        f32 => hypot32(x, y),
+        f64 => unreachable,
+        else => @compileError("hypot not implemented for " ++ @typeName(T)),
     }
 }
 
@@ -45,7 +40,11 @@ fn hypot32(x: f32, y: f32) -> f32 {
         yy *= 0x1.0p-90;
     }
 
-    z * fmath.sqrt(f32, f32(f64(x) * x + f64(y) * y))
+    z * fmath.sqrt(f32(f64(x) * x + f64(y) * y))
+}
+
+test "hypot" {
+    fmath.assert(hypot(f32, 0.0, -1.2) == hypot32(0.0, -1.2));
 }
 
 test "hypot32" {

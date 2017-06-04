@@ -1,15 +1,10 @@
 const fmath = @import("index.zig");
 
 pub fn copysign(comptime T: type, x: T, y: T) -> T {
-    fmath.assert(@typeId(T) == fmath.TypeId.Float);
-    if (T == f32) {
-        copysign32(x, y)
-    } else if (T == f64) {
-        copysign64(x, y)
-    } else if (T == c_longdouble) {
-        @compileError("copysign unimplemented for c_longdouble");
-    } else {
-        unreachable;
+    switch (T) {
+        f32 => copysign32(x, y),
+        f64 => copysign64(x, y),
+        else => @compileError("copysign not implemented for " ++ @typeName(T)),
     }
 }
 
@@ -29,6 +24,11 @@ fn copysign64(x: f64, y: f64) -> f64 {
     const h1 = ux & (@maxValue(u64) / 2);
     const h2 = uy & (u64(1) << 63);
     fmath.bitCast(f64, h1 | h2)
+}
+
+test "copysign" {
+    fmath.assert(copysign(f32, 1.0, 1.0) == copysign32(1.0, 1.0));
+    fmath.assert(copysign(f64, 1.0, 1.0) == copysign64(1.0, 1.0));
 }
 
 test "copysign32" {

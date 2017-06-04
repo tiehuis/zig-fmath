@@ -1,15 +1,11 @@
 const fmath = @import("index.zig");
 
-pub fn trunc(comptime T: type, x: T) -> T {
-    fmath.assert(@typeId(T) == fmath.TypeId.Float);
-    if (T == f32) {
-        trunc32(x)
-    } else if (T == f64) {
-        trunc64(x)
-    } else if (T == c_longdouble) {
-        @compileError("trunc unimplemented for c_longdouble");
-    } else {
-        unreachable;
+pub fn trunc(x: var) -> @typeOf(x) {
+    const T = @typeOf(x);
+    switch (T) {
+        f32 => trunc32(x),
+        f64 => trunc64(x),
+        else => @compileError("trunc not implemented for " ++ @typeName(T)),
     }
 }
 
@@ -53,6 +49,11 @@ fn trunc64(x: f64) -> f64 {
         fmath.forceEval(x + 0x1p120);
         fmath.bitCast(f64, u & ~m)
     }
+}
+
+test "trunc" {
+    fmath.assert(trunc(f32(1.3)) == trunc32(1.3));
+    fmath.assert(trunc(f64(1.3)) == trunc64(1.3));
 }
 
 test "trunc32" {

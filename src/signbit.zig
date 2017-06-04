@@ -1,15 +1,11 @@
 const fmath = @import("index.zig");
 
-pub fn signbit(comptime T: type, x: T) -> bool {
-    fmath.assert(@typeId(T) == fmath.TypeId.Float);
-    if (T == f32) {
-        signbit32(x)
-    } else if (T == f64) {
-        signbit64(x)
-    } else if (T == c_longdouble) {
-        @compileError("signbit unimplemented for c_longdouble");
-    } else {
-        unreachable;
+pub fn signbit(x: var) -> bool {
+    const T = @typeOf(x);
+    switch (T) {
+        f32 => signbit32(x),
+        f64 => signbit64(x),
+        else => @compileError("signbit not implemented for " ++ @typeName(T)),
     }
 }
 
@@ -21,6 +17,11 @@ fn signbit32(x: f32) -> bool {
 fn signbit64(x: f64) -> bool {
     const bits = fmath.bitCast(u64, x);
     bits >> 63 != 0
+}
+
+test "signbit" {
+    fmath.assert(signbit(f32(4.0)) == signbit32(4.0));
+    fmath.assert(signbit(f64(4.0)) == signbit64(4.0));
 }
 
 test "signbit32" {

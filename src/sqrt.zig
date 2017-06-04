@@ -1,15 +1,11 @@
 const fmath = @import("index.zig");
 
-pub fn sqrt(comptime T: type, x: T) -> T {
-    fmath.assert(@typeId(T) == fmath.TypeId.Float);
-    if (T == f32) {
-        sqrt32(x)
-    } else if (T == f64) {
-        @compileError("sqrt unimplemented for f64");
-    } else if (T == c_longdouble) {
-        @compileError("sqrt unimplemented for c_longdouble");
-    } else {
-        unreachable;
+pub fn sqrt(x: var) -> @typeOf(x) {
+    const T = @typeOf(x);
+    switch (T) {
+        f32 => sqrt32(x),
+        f64 => unreachable,
+        else => @compileError("sqrt not implemented for " ++ @typeName(T)),
     }
 }
 
@@ -87,6 +83,10 @@ fn sqrt32(x: f32) -> f32 {
     ix = (q >> 1) + 0x3f000000;
     ix += m << 23;
     fmath.bitCast(f32, ix)
+}
+
+test "sqrt" {
+    fmath.assert(sqrt(f32(0.0)) == sqrt32(0.0));
 }
 
 test "sqrt32" {

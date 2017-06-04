@@ -1,15 +1,11 @@
 const fmath = @import("index.zig");
 
-pub fn asinh(comptime T: type, x: T) -> T {
-    fmath.assert(@typeId(T) == fmath.TypeId.Float);
-    if (T == f32) {
-        asinhf(x)
-    } else if (T == f64) {
-        @compileError("asinh unimplemented for f64");
-    } else if (T == c_longdouble) {
-        @compileError("asinh unimplemented for c_longdouble");
-    } else {
-        unreachable;
+pub fn asinh(x: var) -> @typeOf(x) {
+    const T = @typeOf(x);
+    switch (T) {
+        f32 => asinhf(x),
+        f64 => unreachable,
+        else => @compileError("asinh not implemented for " ++ @typeName(T)),
     }
 }
 
@@ -23,15 +19,15 @@ fn asinhf(x: f32) -> f32 {
 
     // |x| >= 0x1p12 or inf or nan
     if (i >= 0x3F800000 + (12 << 23)) {
-        rx = fmath.log(f32, rx) + 0.69314718055994530941723212145817656;
+        rx = fmath.log(rx) + 0.69314718055994530941723212145817656;
     }
     // |x| >= 2
     else if (i >= 0x3F800000 + (1 << 23)) {
-        rx = fmath.log(f32, 2 * x + 1 / (fmath.sqrt(f32, x * x + 1) + x));
+        rx = fmath.log(2 * x + 1 / (fmath.sqrt(x * x + 1) + x));
     }
     // |x| >= 0x1p-12, up to 1.6ulp error
     else if (i >= 0x3F800000 - (12 << 23)) {
-        rx = fmath.log1p(f32, x + x * x / (fmath.sqrt(f32, x * x + 1) + 1));
+        rx = fmath.log1p(x + x * x / (fmath.sqrt(x * x + 1) + 1));
     }
     // |x| < 0x1p-12, inexact if x != 0
     else {
@@ -39,6 +35,10 @@ fn asinhf(x: f32) -> f32 {
     }
 
     if (s != 0) -rx else rx
+}
+
+test "asinh" {
+    fmath.assert(asinh(f32(0.0)) == asinhf(0.0));
 }
 
 test "asinhf" {

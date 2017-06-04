@@ -1,15 +1,11 @@
 const fmath = @import("index.zig");
 
-pub fn log10(comptime T: type, x: T) -> T {
-    fmath.assert(@typeId(T) == fmath.TypeId.Float);
-    if (T == f32) {
-        log10f(x)
-    } else if (T == f64) {
-        @compileError("log10 unimplemented for f64");
-    } else if (T == c_longdouble) {
-        @compileError("log10 unimplemented for c_longdouble");
-    } else {
-        unreachable;
+pub fn log10(x: var) -> @typeOf(x) {
+    const T = @typeOf(x);
+    switch (T) {
+        f32 => log10f(x),
+        f64 => unreachable,
+        else => @compileError("log10 not implemented for " ++ @typeName(T)),
     }
 }
 
@@ -72,6 +68,10 @@ fn log10f(x: f32) -> f32 {
     const dk = f32(k);
 
     dk * log10_2lo + (lo + hi) * ivln10lo + lo * ivln10hi + hi * ivln10hi + dk * log10_2hi
+}
+
+test "log10" {
+    fmath.assert(log10(f32(0.2)) == log10f(0.2));
 }
 
 test "log10f" {

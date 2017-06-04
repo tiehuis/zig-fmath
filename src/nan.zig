@@ -1,5 +1,9 @@
 const fmath = @import("index.zig");
 
-pub fn nan(s: []const u8) -> f64 {
-    fmath.bitCast(f64, fmath.nan_u64)
+pub fn nan(comptime T: type) -> f64 {
+    switch (T) {
+        f32 => fmath.bitCast(f32, fmath.nan_u32),
+        f64 => fmath.bitCast(f64, fmath.nan_u64),
+        else => @compileError("nan not implemented for " ++ @typeName(T)),
+    }
 }

@@ -1,15 +1,11 @@
 const fmath = @import("index.zig");
 
-pub fn exp(comptime T: type, x: T) -> T {
-    fmath.assert(@typeId(T) == fmath.TypeId.Float);
-    if (T == f32) {
-        exp32(x)
-    } else if (T == f64) {
-        @compileError("exp unimplemented for f64");
-    } else if (T == c_longdouble) {
-        @compileError("exp unimplemented for c_longdouble");
-    } else {
-        unreachable;
+pub fn exp(x: var) -> @typeOf(x) {
+    const T = @typeOf(x);
+    switch (T) {
+        f32 => exp32(x),
+        f64 => unreachable,
+        else => @compileError("exp not implemented for " ++ @typeName(T)),
     }
 }
 
@@ -81,8 +77,12 @@ fn exp32(x_: f32) -> f32 {
     if (k == 0) {
         y
     } else {
-        fmath.scalbn(f32, y, k)
+        fmath.scalbn(y, k)
     }
+}
+
+test "exp" {
+    fmath.assert(exp(f32(0.0)) == exp32(0.0));
 }
 
 test "exp32" {

@@ -1,15 +1,11 @@
 const fmath = @import("index.zig");
 
-pub fn atanh(comptime T: type, x: T) -> T {
-    fmath.assert(@typeId(T) == fmath.TypeId.Float);
-    if (T == f32) {
-        atanhf(x)
-    } else if (T == f64) {
-        @compileError("atanh unimplemented for f64");
-    } else if (T == c_longdouble) {
-        @compileError("atanh unimplemented for c_longdouble");
-    } else {
-        unreachable;
+pub fn atanh(x: var) -> @typeOf(x) {
+    const T = @typeOf(x);
+    switch (T) {
+        f32 => atanhf(x),
+        f64 => unreachable,
+        else => @compileError("atanh not implemented for " ++ @typeName(T)),
     }
 }
 
@@ -30,14 +26,18 @@ fn atanhf(x: f32) -> f32 {
         }
         // |x| < 0.5
         else {
-            y = 0.5 * fmath.log1p(f32, 2 * y + 2 * y * y / (1 - y));
+            y = 0.5 * fmath.log1p(2 * y + 2 * y * y / (1 - y));
         }
     } else {
         // avoid overflow
-        y = 0.5 * fmath.log1p(f32, 2 * (y / (1 - y)));
+        y = 0.5 * fmath.log1p(2 * (y / (1 - y)));
     }
 
     if (s != 0) -y else y
+}
+
+test "atanh" {
+    fmath.assert(atanh(f32(0.0)) == atanhf(0.0));
 }
 
 test "atanhf" {

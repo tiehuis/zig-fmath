@@ -1,15 +1,11 @@
 const fmath = @import("index.zig");
 
-pub fn floor(comptime T: type, x: T) -> T {
-    fmath.assert(@typeId(T) == fmath.TypeId.Float);
-    if (T == f32) {
-        floor32(x)
-    } else if (T == f64) {
-        floor64(x)
-    } else if (T == c_longdouble) {
-        @compileError("floor unimplemented for c_longdouble");
-    } else {
-        unreachable;
+pub fn floor(x: var) -> @typeOf(x) {
+    const T = @typeOf(x);
+    switch (T) {
+        f32 => floor32(x),
+        f64 => floor64(x),
+        else => @compileError("floor not implemented for " ++ @typeName(T)),
     }
 }
 
@@ -69,6 +65,11 @@ fn floor64(x: f64) -> f64 {
     } else {
         x + y
     }
+}
+
+test "floor" {
+    fmath.assert(floor(f32(1.3)) == floor32(1.3));
+    fmath.assert(floor(f64(1.3)) == floor64(1.3));
 }
 
 test "floor32" {

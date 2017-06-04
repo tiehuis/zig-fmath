@@ -27,7 +27,7 @@ pub fn printFloat(y_: f64, prec: u8) -> %void {
         }
     };
 
-    if (!fmath.isfinite(y)) {
+    if (!fmath.isFinite(y)) {
         const sp = if (y != y) "nan" else "inf";
         %return printf("{}\n", sp);
         return;

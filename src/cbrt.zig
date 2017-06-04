@@ -1,15 +1,11 @@
 const fmath = @import("index.zig");
 
-pub fn cbrt(comptime T: type, x: T) -> T {
-    fmath.assert(@typeId(T) == fmath.TypeId.Float);
-    if (T == f32) {
-        cbrt32(x)
-    } else if (T == f64) {
-        @compileError("cbrt unimplemented for f64");
-    } else if (T == c_longdouble) {
-        @compileError("cbrt unimplemented for c_longdouble");
-    } else {
-        unreachable;
+pub fn cbrt(x: var) -> @typeOf(x) {
+    const T = @typeOf(x);
+    switch (T) {
+        f32 => cbrt32(x),
+        f64 => unreachable,
+        else => @compileError("cbrt not implemented for " ++ @typeName(T)),
     }
 }
 
@@ -51,6 +47,10 @@ fn cbrt32(x: f32) -> f32 {
     t = t * (f64(x) + x + r) / (x + r + r);
 
     f32(t)
+}
+
+test "cbrt" {
+    fmath.assert(cbrt(f32(0.0)) == cbrt32(0.0));
 }
 
 test "cbrt32" {

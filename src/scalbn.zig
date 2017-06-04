@@ -1,15 +1,11 @@
 const fmath = @import("index.zig");
 
-pub fn scalbn(comptime T: type, x: T, n: i32) -> T {
-    fmath.assert(@typeId(T) == fmath.TypeId.Float);
-    if (T == f32) {
-        scalbn32(x, n)
-    } else if (T == f64) {
-        scalbn64(x, n)
-    } else if (T == c_longdouble) {
-        @compileError("scalbn unimplemented for c_longdouble");
-    } else {
-        unreachable;
+pub fn scalbn(x: var, n: i32) -> @typeOf(x) {
+    const T = @typeOf(x);
+    switch (T) {
+        f32 => scalbn32(x, n),
+        f64 => scalbn64(x, n),
+        else => @compileError("scalbn not implemented for " ++ @typeName(T)),
     }
 }
 
@@ -73,6 +69,11 @@ fn scalbn64(x: f64, n_: i32) -> f64 {
 
     const u = (u64(n) + 0x3FF) << 52;
     y * fmath.bitCast(f64, u)
+}
+
+test "scalbn" {
+    fmath.assert(scalbn(f32(1.5), 4) == scalbn32(1.5, 4));
+    fmath.assert(scalbn(f64(1.5), 4) == scalbn64(1.5, 4));
 }
 
 test "scalbn32" {

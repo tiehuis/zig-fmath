@@ -1,15 +1,11 @@
 const fmath = @import("index.zig");
 
-pub fn asin(comptime T: type, x: T) -> T {
-    fmath.assert(@typeId(T) == fmath.TypeId.Float);
-    if (T == f32) {
-        asin32(x)
-    } else if (T == f64) {
-        @compileError("asin unimplemented for f64");
-    } else if (T == c_longdouble) {
-        @compileError("asin unimplemented for c_longdouble");
-    } else {
-        unreachable;
+pub fn asin(x: var) -> @typeOf(x) {
+    const T = @typeOf(x);
+    switch (T) {
+        f32 => asin32(x),
+        f64 => unreachable,
+        else => @compileError("asin not implemented for " ++ @typeName(T)),
     }
 }
 
@@ -50,8 +46,8 @@ fn asin32(x: f32) -> f32 {
     }
 
     // 1 > |x| >= 0.5
-    const z = (1 - fmath.fabs(f32, x)) * 0.5;
-    const s = fmath.sqrt(f32, z);
+    const z = (1 - fmath.fabs(x)) * 0.5;
+    const s = fmath.sqrt(z);
     const fx = pio2 - 2 * (s + s * r32(z));
 
     if (hx >> 31 != 0) {
@@ -59,6 +55,10 @@ fn asin32(x: f32) -> f32 {
     } else {
         fx
     }
+}
+
+test "asin" {
+    fmath.assert(asin(f32(0.0)) == asin32(0.0));
 }
 
 test "asin32" {

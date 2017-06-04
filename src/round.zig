@@ -1,15 +1,11 @@
 const fmath = @import("index.zig");
 
-pub fn round(comptime T: type, x: T) -> T {
-    fmath.assert(@typeId(T) == fmath.TypeId.Float);
-    if (T == f32) {
-        round32(x)
-    } else if (T == f64) {
-        round64(x)
-    } else if (T == c_longdouble) {
-        @compileError("round unimplemented for c_longdouble");
-    } else {
-        unreachable;
+pub fn round(x: var) -> @typeOf(x) {
+    const T = @typeOf(x);
+    switch (T) {
+        f32 => round32(x),
+        f64 => round64(x),
+        else => @compileError("round not implemented for " ++ @typeName(T)),
     }
 }
 
@@ -77,6 +73,11 @@ fn round64(x_: f64) -> f64 {
     } else {
         y
     }
+}
+
+test "round" {
+    fmath.assert(round(f32(1.3)) == round32(1.3));
+    fmath.assert(round(f64(1.3)) == round64(1.3));
 }
 
 test "round32" {
