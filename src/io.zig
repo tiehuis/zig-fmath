@@ -19,7 +19,7 @@ fn ilen(n_: u64, base: u8) -> u8 {
 pub fn printFloat(y_: f64, prec: u8) -> %void {
     var y = y_;
     const prefix = {
-        if (fmath.signbit(f64, y)) {
+        if (fmath.signbit(y)) {
             y = -y;
             "-"
         } else {
