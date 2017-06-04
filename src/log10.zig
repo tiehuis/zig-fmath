@@ -4,24 +4,23 @@ pub fn log10(x: var) -> @typeOf(x) {
     const T = @typeOf(x);
     switch (T) {
         f32 => log10f(x),
-        f64 => unreachable,
+        f64 => log10d(x),
         else => @compileError("log10 not implemented for " ++ @typeName(T)),
     }
 }
 
-const ivln10hi: f32  =  4.3432617188e-01;
-const ivln10lo: f32  = -3.1689971365e-05;
-const log10_2hi: f32 =  3.0102920532e-01;
-const log10_2lo: f32 =  7.9034151668e-07;
-const Lg1: f32 = 0xaaaaaa.0p-24;
-const Lg2: f32 = 0xccce13.0p-25;
-const Lg3: f32 = 0x91e9ee.0p-25;
-const Lg4: f32 = 0xf89e26.0p-26;
+fn log10f(x_: f32) -> f32 {
+    const ivln10hi: f32  =  4.3432617188e-01;
+    const ivln10lo: f32  = -3.1689971365e-05;
+    const log10_2hi: f32 =  3.0102920532e-01;
+    const log10_2lo: f32 =  7.9034151668e-07;
+    const Lg1: f32 = 0xaaaaaa.0p-24;
+    const Lg2: f32 = 0xccce13.0p-25;
+    const Lg3: f32 = 0x91e9ee.0p-25;
+    const Lg4: f32 = 0xf89e26.0p-26;
 
-fn log10f(x: f32) -> f32 {
+    var x = x_;
     var u = fmath.bitCast(u32, x);
-
-    var xx = x;
     var ix = u;
     var k: i32 = 0;
 
@@ -37,8 +36,8 @@ fn log10f(x: f32) -> f32 {
         }
 
         k -= 25;
-        xx *= 0x1.0p25;
-        ix = fmath.bitCast(u32, xx);
+        x *= 0x1.0p25;
+        ix = fmath.bitCast(u32, x);
     } else if (ix >= 0x7F800000) {
         return x;
     } else if (ix == 0x3F800000) {
@@ -49,9 +48,9 @@ fn log10f(x: f32) -> f32 {
     ix += 0x3F800000 - 0x3F3504F3;
     k += i32(ix >> 23) - 0x7F;
     ix = (ix & 0x007FFFFF) + 0x3F3504F3;
-    xx = fmath.bitCast(f32, ix);
+    x = fmath.bitCast(f32, ix);
 
-    const f = xx - 1.0;
+    const f = x - 1.0;
     const s = f / (2.0 + f);
     const z = s * s;
     const w = z * z;
@@ -70,8 +69,86 @@ fn log10f(x: f32) -> f32 {
     dk * log10_2lo + (lo + hi) * ivln10lo + lo * ivln10hi + hi * ivln10hi + dk * log10_2hi
 }
 
+fn log10d(x_: f64) -> f64 {
+    const ivln10hi: f64  = 4.34294481878168880939e-01;
+    const ivln10lo: f64  = 2.50829467116452752298e-11;
+    const log10_2hi: f64 = 3.01029995663611771306e-01;
+    const log10_2lo: f64 = 3.69423907715893078616e-13;
+    const Lg1: f64 = 6.666666666666735130e-01;
+    const Lg2: f64 = 3.999999999940941908e-01;
+    const Lg3: f64 = 2.857142874366239149e-01;
+    const Lg4: f64 = 2.222219843214978396e-01;
+    const Lg5: f64 = 1.818357216161805012e-01;
+    const Lg6: f64 = 1.531383769920937332e-01;
+    const Lg7: f64 = 1.479819860511658591e-01;
+
+    var x = x_;
+    var ix = fmath.bitCast(u64, x);
+    var hx = u32(ix >> 32);
+    var k: i32 = 0;
+
+    if (hx < 0x00100000 or hx >> 31 != 0) {
+        // log(+-0) = -inf
+        if (ix << 1 == 0) {
+            return -1 / (x * x);
+        }
+        // log(-#) = nan
+        if (hx >> 31 != 0) {
+            return (x - x) / 0.0;
+        }
+
+        // subnormal, scale x
+        k -= 54;
+        x *= 0x1.0p54;
+        hx = fmath.bitCast(u32, ix >> 32);
+    }
+    else if (hx >= 0x7FF00000) {
+        return x;
+    }
+    else if (hx == 0x3FF00000 and ix << 32 == 0) {
+        return 0;
+    }
+
+    // x into [sqrt(2) / 2, sqrt(2)]
+    hx += 0x3FF00000 - 0x3FE6A09E;
+    k += i32(hx >> 20) - 0x3FF;
+    hx = (hx & 0x000FFFFF) + 0x3FE6A09E;
+    ix = (u64(hx) << 32) | (ix & 0xFFFFFFFF);
+    x = fmath.bitCast(f64, ix);
+
+    const f = x - 1.0;
+    const hfsq = 0.5 * f * f;
+    const s = f / (2.0 + f);
+    const z = s * s;
+    const w = z * z;
+    const t1 = w * (Lg2 + w * (Lg4 + w * Lg6));
+    const t2 = z * (Lg1 + w * (Lg3 + w * (Lg5 + w * Lg7)));
+    const R = t2 + t1;
+
+    // hi + lo = f - hfsq + s * (hfsq + R) ~ log(1 + f)
+    var hi = f - hfsq;
+    var hii = fmath.bitCast(u64, hi);
+    hii &= @maxValue(u64) << 32;
+    hi = fmath.bitCast(f64, hii);
+    const lo = f - hi - hfsq + s * (hfsq + R);
+
+    // val_hi + val_lo ~ log10(1 + f) + k * log10(2)
+    var val_hi = hi * ivln10hi;
+    const dk = f64(k);
+    const y = dk * log10_2hi;
+    var val_lo = dk * log10_2lo + (lo + hi) * ivln10lo + lo * ivln10hi;
+
+    // Extra precision multiplication
+    const ww = y + val_hi;
+    val_lo += (y - ww) + val_hi;
+    val_hi = ww;
+
+    val_lo + val_hi
+}
+
 test "log10" {
     fmath.assert(log10(f32(0.2)) == log10f(0.2));
+    fmath.assert(log10(f64(0.2)) == log10d(0.2));
 }
 
 test "log10f" {
@@ -83,4 +160,15 @@ test "log10f" {
     fmath.assert(fmath.approxEq(f32, log10f(37.45), 1.573452, epsilon));
     fmath.assert(fmath.approxEq(f32, log10f(89.123), 1.94999, epsilon));
     fmath.assert(fmath.approxEq(f32, log10f(123123.234375), 5.09034, epsilon));
+}
+
+test "log10d" {
+    const epsilon = 0.000001;
+
+    fmath.assert(fmath.approxEq(f64, log10d(0.2), -0.698970, epsilon));
+    fmath.assert(fmath.approxEq(f64, log10d(0.8923), -0.049489, epsilon));
+    fmath.assert(fmath.approxEq(f64, log10d(1.5), 0.176091, epsilon));
+    fmath.assert(fmath.approxEq(f64, log10d(37.45), 1.573452, epsilon));
+    fmath.assert(fmath.approxEq(f64, log10d(89.123), 1.94999, epsilon));
+    fmath.assert(fmath.approxEq(f64, log10d(123123.234375), 5.09034, epsilon));
 }
