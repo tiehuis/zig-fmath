@@ -87,6 +87,7 @@ pub const acos = @import("acos.zig").acos;
 pub const asin = @import("asin.zig").asin;
 pub const hypot = @import("hypot.zig").hypot;
 pub const exp = @import("exp.zig").exp;
+pub const exp2 = @import("exp2.zig").exp2;
 pub const log = @import("log.zig").log;
 pub const log2 = @import("log2.zig").log2;
 pub const log10 = @import("log10.zig").log10;
@@ -118,6 +119,7 @@ test "fmath" {
     _ = @import("asin.zig");
     _ = @import("hypot.zig");
     _ = @import("exp.zig");
+    _ = @import("exp2.zig");
     _ = @import("log.zig");
     _ = @import("log2.zig");
     _ = @import("log10.zig");
