@@ -3,7 +3,7 @@ const fmath = @import("index.zig");
 pub fn hypot(comptime T: type, x: T, y: T) -> T {
     switch (T) {
         f32 => hypot32(x, y),
-        f64 => unreachable,
+        f64 => hypot64(x, y),
         else => @compileError("hypot not implemented for " ++ @typeName(T)),
     }
 }
@@ -43,8 +43,71 @@ fn hypot32(x: f32, y: f32) -> f32 {
     z * fmath.sqrt(f32(f64(x) * x + f64(y) * y))
 }
 
+fn sq(hi: &f64, lo: &f64, x: f64) {
+    // TODO: This requires a long double depending on the FLT_EVAL_METHOD.
+    const split: f64 = 0x1.0p27 + 1.0;
+    const xc = x * split;
+    const xh = x - xc + xc;
+    const xl = x - xh;
+    *hi = x * x;
+    *lo = xh * xh - *hi + 2 * xh * xl + xl * xl;
+}
+
+fn hypot64(x: f64, y: f64) -> f64 {
+    var ux = fmath.bitCast(u64, x);
+    var uy = fmath.bitCast(u64, y);
+
+    ux &= @maxValue(u64) >> 1;
+    uy &= @maxValue(u64) >> 1;
+    if (ux < uy) {
+        const tmp = ux;
+        ux = uy;
+        uy = tmp;
+    }
+
+    const ex = ux >> 52;
+    const ey = uy >> 52;
+    var xx = fmath.bitCast(f64, ux);
+    var yy = fmath.bitCast(f64, uy);
+
+    // hypot(inf, nan) == inf
+    if (ey == 0x7FF) {
+        return yy;
+    }
+    if (ex == 0x7FF or uy == 0) {
+        return xx;
+    }
+
+    // hypot(x, y) ~= x + y * y / x / 2 with inexact for small y/x
+    if (ex - ey > 64) {
+        return xx + yy;
+    }
+
+    var z: f64 = 1;
+    if (ex > 0x3FF + 510) {
+        z = 0x1.0p700;
+        xx *= 0x1.0p-700;
+        yy *= 0x1.0p-700;
+    } else if (ey < 0x3FF - 450) {
+        z = 0x1.0p-700;
+        xx *= 0x1.0p700;
+        yy *= 0x1.0p700;
+    }
+
+    var hx: f64 = undefined;
+    var lx: f64 = undefined;
+    var hy: f64 = undefined;
+    var ly: f64 = undefined;
+
+    sq(&hx, &lx, x);
+    sq(&hy, &ly, y);
+
+    z * fmath.sqrt(ly + lx + hy + hx)
+}
+
 test "hypot" {
     fmath.assert(hypot(f32, 0.0, -1.2) == hypot32(0.0, -1.2));
+    fmath.assert(hypot(f64, 0.0, -1.2) == hypot64(0.0, -1.2));
 }
 
 test "hypot32" {
@@ -57,4 +120,16 @@ test "hypot32" {
     fmath.assert(fmath.approxEq(f32, hypot32(37.45, 159.835), 164.163742, epsilon));
     fmath.assert(fmath.approxEq(f32, hypot32(89.123, 382.028905), 392.286865, epsilon));
     fmath.assert(fmath.approxEq(f32, hypot32(123123.234375, 529428.707813), 543556.875, epsilon));
+}
+
+test "hypot64" {
+    const epsilon = 0.000001;
+
+    fmath.assert(fmath.approxEq(f64, hypot64(0.0, -1.2), 1.2, epsilon));
+    fmath.assert(fmath.approxEq(f64, hypot64(0.2, -0.34), 0.394462, epsilon));
+    fmath.assert(fmath.approxEq(f64, hypot64(0.8923, 2.636890), 2.783772, epsilon));
+    fmath.assert(fmath.approxEq(f64, hypot64(1.5, 5.25), 5.460082, epsilon));
+    fmath.assert(fmath.approxEq(f64, hypot64(37.45, 159.835), 164.163728, epsilon));
+    fmath.assert(fmath.approxEq(f64, hypot64(89.123, 382.028905), 392.286876, epsilon));
+    fmath.assert(fmath.approxEq(f64, hypot64(123123.234375, 529428.707813), 543556.885247, epsilon));
 }

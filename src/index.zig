@@ -35,7 +35,7 @@ pub const f32_toint = 1.0 / f32_epsilon;
 // Insufficient comptime support for floating points cast?
 pub const nan_u32 = u32(0x7F800001);
 pub const inf_u32 = u32(0x7F800000);
-pub const nan_u64 = u64((0x7FF << 52) | 1);
+pub const nan_u64 = u64(0x7FF << 52) | 1;
 pub const inf_u64 = u64(0x7FF << 52);
 pub const nan = @import("nan.zig").nan;
 pub const inf = @import("inf.zig").inf;
