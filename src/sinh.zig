@@ -5,7 +5,7 @@ pub fn sinh(x: var) -> @typeOf(x) {
     const T = @typeOf(x);
     switch (T) {
         f32 => sinhf(x),
-        f64 => unreachable,
+        f64 => sinhd(x),
         else => @compileError("sinh not implemented for " ++ @typeName(T)),
     }
 }
@@ -40,8 +40,37 @@ fn sinhf(x: f32) -> f32 {
     2 * h * expo2(ax)
 }
 
+fn sinhd(x: f64) -> f64 {
+    const u = fmath.bitCast(u64, x);
+    const w = u32(u >> 32);
+    const ax = fmath.bitCast(f64, u & (@maxValue(u64) >> 1));
+
+    var h: f32 = 0.5;
+    if (u >> 63 != 0) {
+        h = -h;
+    }
+
+    // |x| < log(FLT_MAX)
+    if (w < 0x40862E42) {
+        const t = fmath.expm1(ax);
+        if (w < 0x3FF00000) {
+            if (w < 0x3FF00000 - (26 << 20)) {
+                return x;
+            } else {
+                return h * (2 * t - t * t / (t + 1));
+            }
+        }
+        // NOTE: |x| > log(0x1p26) + eps could be h * exp(x)
+        return h * (t + t / (t + 1));
+    }
+
+    // |x| > log(DBL_MAX) or nan
+    2 * h * expo2(ax)
+}
+
 test "sinh" {
     fmath.assert(sinh(f32(1.5)) == sinhf(1.5));
+    fmath.assert(sinh(f64(1.5)) == sinhd(1.5));
 }
 
 test "sinhf" {
@@ -51,4 +80,13 @@ test "sinhf" {
     fmath.assert(fmath.approxEq(f32, sinhf(0.2), 0.201336, epsilon));
     fmath.assert(fmath.approxEq(f32, sinhf(0.8923), 1.015512, epsilon));
     fmath.assert(fmath.approxEq(f32, sinhf(1.5), 2.129279, epsilon));
+}
+
+test "sinhd" {
+    const epsilon = 0.000001;
+
+    fmath.assert(fmath.approxEq(f64, sinhd(0.0), 0.0, epsilon));
+    fmath.assert(fmath.approxEq(f64, sinhd(0.2), 0.201336, epsilon));
+    fmath.assert(fmath.approxEq(f64, sinhd(0.8923), 1.015512, epsilon));
+    fmath.assert(fmath.approxEq(f64, sinhd(1.5), 2.129279, epsilon));
 }

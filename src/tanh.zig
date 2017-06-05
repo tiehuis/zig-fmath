@@ -5,7 +5,7 @@ pub fn tanh(x: var) -> @typeOf(x) {
     const T = @typeOf(x);
     switch (T) {
         f32 => tanhf(x),
-        f64 => unreachable,
+        f64 => tanhd(x),
         else => @compileError("tanh not implemented for " ++ @typeName(T)),
     }
 }
@@ -53,8 +53,49 @@ fn tanhf(x: f32) -> f32 {
     }
 }
 
+fn tanhd(x: f64) -> f64 {
+    const u = fmath.bitCast(u64, x);
+    const w = u32(u >> 32);
+    const ax = fmath.bitCast(f64, u & (@maxValue(u64) >> 1));
+
+    var t: f64 = undefined;
+
+    // |x| < log(3) / 2 ~= 0.5493 or nan
+    if (w > 0x3Fe193EA) {
+        // |x| > 20 or nan
+        if (w > 0x40340000) {
+            t = 1.0 + 0 / x;
+        } else {
+            t = fmath.expm1(2 * x);
+            t = 1 - 2 / (t + 2);
+        }
+    }
+    // |x| > log(5 / 3) / 2 ~= 0.2554
+    else if (w > 0x3FD058AE) {
+        t = fmath.expm1(2 * x);
+        t = t / (t + 2);
+    }
+    // |x| >= 0x1.0p-1022
+    else if (w >= 0x00100000) {
+        t = fmath.expm1(-2 * x);
+        t = -t / (t + 2);
+    }
+    // |x| is subnormal
+    else {
+        fmath.forceEval(f32(x));
+        t = x;
+    }
+
+    if (u >> 63 != 0) {
+        -t
+    } else {
+        t
+    }
+}
+
 test "tanh" {
     fmath.assert(tanh(f32(1.5)) == tanhf(1.5));
+    fmath.assert(tanh(f64(1.5)) == tanhd(1.5));
 }
 
 test "tanhf" {
@@ -65,4 +106,14 @@ test "tanhf" {
     fmath.assert(fmath.approxEq(f32, tanhf(0.8923), 0.712528, epsilon));
     fmath.assert(fmath.approxEq(f32, tanhf(1.5), 0.905148, epsilon));
     fmath.assert(fmath.approxEq(f32, tanhf(37.45), 1.0, epsilon));
+}
+
+test "tanhd" {
+    const epsilon = 0.000001;
+
+    fmath.assert(fmath.approxEq(f64, tanhd(0.0), 0.0, epsilon));
+    fmath.assert(fmath.approxEq(f64, tanhd(0.2), 0.197375, epsilon));
+    fmath.assert(fmath.approxEq(f64, tanhd(0.8923), 0.712528, epsilon));
+    fmath.assert(fmath.approxEq(f64, tanhd(1.5), 0.905148, epsilon));
+    fmath.assert(fmath.approxEq(f64, tanhd(37.45), 1.0, epsilon));
 }

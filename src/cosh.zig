@@ -5,7 +5,7 @@ pub fn cosh(x: var) -> @typeOf(x) {
     const T = @typeOf(x);
     switch (T) {
         f32 => coshf(x),
-        f64 => unreachable,
+        f64 => coshd(x),
         else => @compileError("cosh not implemented for " ++ @typeName(T)),
     }
 }
@@ -39,8 +39,36 @@ fn coshf(x: f32) -> f32 {
     expo2(ax)
 }
 
+fn coshd(x: f64) -> f64 {
+    const u = fmath.bitCast(u64, x);
+    const w = u32(u >> 32);
+    const ax = fmath.bitCast(f64, u & (@maxValue(u64) >> 1));
+
+    // |x| < log(2)
+    if (w < 0x3FE62E42) {
+        if (w < 0x3FF00000 - (26 << 20)) {
+            // raise inexact if x != 0
+            fmath.forceEval(x + 0x1.0p120);
+            return 1.0;
+        }
+        const t = fmath.expm1(ax);
+        return 1 + t * t / (2 * (1 + t));
+    }
+
+    // |x| < log(DBL_MAX)
+    if (w < 0x40862E42) {
+        const t = fmath.exp(ax);
+        // NOTE: If x > log(0x1p26) then 1/t is not required.
+        return 0.5 * (t + 1 / t);
+    }
+
+    // |x| > log(CBL_MAX) or nan
+    expo2(ax)
+}
+
 test "cosh" {
     fmath.assert(cosh(f32(1.5)) == coshf(1.5));
+    fmath.assert(cosh(f64(1.5)) == coshd(1.5));
 }
 
 test "coshf" {
@@ -50,4 +78,13 @@ test "coshf" {
     fmath.assert(fmath.approxEq(f32, coshf(0.2), 1.020067, epsilon));
     fmath.assert(fmath.approxEq(f32, coshf(0.8923), 1.425225, epsilon));
     fmath.assert(fmath.approxEq(f32, coshf(1.5), 2.352410, epsilon));
+}
+
+test "coshd" {
+    const epsilon = 0.000001;
+
+    fmath.assert(fmath.approxEq(f64, coshd(0.0), 1.0, epsilon));
+    fmath.assert(fmath.approxEq(f64, coshd(0.2), 1.020067, epsilon));
+    fmath.assert(fmath.approxEq(f64, coshd(0.8923), 1.425225, epsilon));
+    fmath.assert(fmath.approxEq(f64, coshd(1.5), 2.352410, epsilon));
 }
