@@ -4,7 +4,7 @@ pub fn atanh(x: var) -> @typeOf(x) {
     const T = @typeOf(x);
     switch (T) {
         f32 => atanhf(x),
-        f64 => unreachable,
+        f64 => atanhd(x),
         else => @compileError("atanh not implemented for " ++ @typeName(T)),
     }
 }
@@ -36,8 +36,35 @@ fn atanhf(x: f32) -> f32 {
     if (s != 0) -y else y
 }
 
+fn atanhd(x: f64) -> f64 {
+    const u = fmath.bitCast(u64, x);
+    const e = (u >> 52) & 0x7FF;
+    const s = u >> 63;
+
+    var y = fmath.bitCast(f64, u & (@maxValue(u64) >> 1)); // |x|
+
+    if (e < 0x3FF - 1) {
+        if (e < 0x3FF - 32) {
+            // underflow
+            if (e == 0) {
+                fmath.forceEval(f32(y));
+            }
+        }
+        // |x| < 0.5
+        else {
+            y = 0.5 * fmath.log1p(2 * y + 2 * y * y / (1 - y));
+        }
+    } else {
+        // avoid overflow
+        y = 0.5 * fmath.log1p(2 * (y / (1 - y)));
+    }
+
+    if (s != 0) -y else y
+}
+
 test "atanh" {
     fmath.assert(atanh(f32(0.0)) == atanhf(0.0));
+    fmath.assert(atanh(f64(0.0)) == atanhd(0.0));
 }
 
 test "atanhf" {
@@ -46,8 +73,12 @@ test "atanhf" {
     fmath.assert(fmath.approxEq(f32, atanhf(0.0), 0.0, epsilon));
     fmath.assert(fmath.approxEq(f32, atanhf(0.2), 0.202733, epsilon));
     fmath.assert(fmath.approxEq(f32, atanhf(0.8923), 1.433099, epsilon));
-    //fmath.assert(fmath.approxEq(f32, atanhf(1.5), 0.962424, epsilon));
-    //fmath.assert(fmath.approxEq(f32, atanhf(37.45), 4.315976, epsilon));
-    //fmath.assert(fmath.approxEq(f32, atanhf(89.123), 5.183133, epsilon));
-    //fmath.assert(fmath.approxEq(f32, atanhf(123123.234375), 12.414088, epsilon));
+}
+
+test "atanhd" {
+    const epsilon = 0.000001;
+
+    fmath.assert(fmath.approxEq(f64, atanhd(0.0), 0.0, epsilon));
+    fmath.assert(fmath.approxEq(f64, atanhd(0.2), 0.202733, epsilon));
+    fmath.assert(fmath.approxEq(f64, atanhd(0.8923), 1.433099, epsilon));
 }
