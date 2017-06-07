@@ -36,7 +36,7 @@ fn scalbn32(x: f32, n_: i32) -> f32 {
         }
     }
 
-    const u = (u32(n) + 0x7F) << 23;
+    const u = (u32(n) +% 0x7F) << 23;
     y * fmath.bitCast(f32, u)
 }
 
@@ -67,7 +67,7 @@ fn scalbn64(x: f64, n_: i32) -> f64 {
         }
     }
 
-    const u = (u64(n) + 0x3FF) << 52;
+    const u = (u64(n) +% 0x3FF) << 52;
     y * fmath.bitCast(f64, u)
 }
 
