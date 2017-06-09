@@ -76,6 +76,7 @@ pub const trunc = @import("floor.zig").trunc;
 pub const round = @import("round.zig").round;
 pub const frexp = @import("frexp.zig").frexp;
 pub const fmod = @import("fmod.zig").fmod;
+pub const modf = @import("modf.zig").modf;
 pub const copysign = @import("copysign.zig").copysign;
 pub const isFinite = @import("isfinite.zig").isFinite;
 pub const isInf = @import("isinf.zig").isInf;
@@ -118,6 +119,7 @@ test "fmath" {
     _ = @import("round.zig");
     _ = @import("frexp.zig");
     _ = @import("fmod.zig");
+    _ = @import("modf.zig");
     _ = @import("copysign.zig");
     _ = @import("isfinite.zig");
     _ = @import("isinf.zig");
