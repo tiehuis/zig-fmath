@@ -107,6 +107,7 @@ pub const cosh = @import("cosh.zig").cosh;
 pub const tanh = @import("tanh.zig").tanh;
 pub const cos = @import("cos.zig").cos;
 pub const sin = @import("sin.zig").sin;
+pub const tan = @import("tan.zig").tan;
 
 test "fmath" {
     _ = @import("io.zig");
@@ -150,4 +151,5 @@ test "fmath" {
     _ = @import("tanh.zig");
     _ = @import("sin.zig");
     _ = @import("cos.zig");
+    _ = @import("tan.zig");
 }
