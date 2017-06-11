@@ -19,7 +19,7 @@ fn exp32(x_: f32) -> f32 {
 
     var x = x_;
     var hx = fmath.bitCast(u32, x);
-    const sign = hx >> 31;
+    const sign = i32(hx >> 31);
     hx &= 0x7FFFFFFF;
 
     // |x| >= -87.33655 or nan
@@ -49,10 +49,10 @@ fn exp32(x_: f32) -> f32 {
     if (hx > 0x3EB17218) {
         // |x| > 1.5 * ln2
         if (hx > 0x3F851592) {
-            k = i32(invln2 * x + half[sign]);
+            k = i32(invln2 * x + half[usize(sign)]);
         }
         else {
-            k = i32(1 - sign - sign);
+            k = 1 - sign - sign;
         }
 
         const fk = f32(k);
@@ -96,7 +96,7 @@ fn exp64(x_: f64) -> f64 {
     var x = x_;
     var ux = fmath.bitCast(u64, x);
     var hx = ux >> 32;
-    const sign = hx >> 31;
+    const sign = i32(hx >> 31);
     hx &= 0x7FFFFFFF;
 
     // |x| >= 708.39 or nan
@@ -128,10 +128,10 @@ fn exp64(x_: f64) -> f64 {
     if (hx > 0x3EB17218) {
         // |x| >= 1.5 * ln2
         if (hx > 0x3FF0A2B2) {
-            k = i32(invln2 * x + half[sign]);
+            k = i32(invln2 * x + half[usize(sign)]);
         }
         else {
-            k = i32(1 - sign - sign);
+            k = 1 - sign - sign;
         }
 
         const dk = f64(k);
