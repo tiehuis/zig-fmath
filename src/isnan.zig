@@ -12,7 +12,7 @@ pub fn isNan(x: var) -> bool {
             (bits & (@maxValue(u64) >> 1)) > (u64(0x7FF) << 52)
         },
         else => {
-            @compileError("isFinite not implemented for " ++ @typeName(T));
+            @compileError("isNan not implemented for " ++ @typeName(T));
         },
     }
 }

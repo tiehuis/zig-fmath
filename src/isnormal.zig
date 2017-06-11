@@ -12,7 +12,7 @@ pub fn isNormal(x: var) -> bool {
             (bits + (1 << 52)) & (@maxValue(u64) >> 1) >= (1 << 53)
         },
         else => {
-            @compileError("isFinite not implemented for " ++ @typeName(T));
+            @compileError("isNormal not implemented for " ++ @typeName(T));
         },
     }
 }
