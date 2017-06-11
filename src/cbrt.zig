@@ -3,8 +3,8 @@ const fmath = @import("index.zig");
 pub fn cbrt(x: var) -> @typeOf(x) {
     const T = @typeOf(x);
     switch (T) {
-        f32 => cbrt32(x),
-        f64 => cbrt64(x),
+        f32 => @inlineCall(cbrt32, x),
+        f64 => @inlineCall(cbrt64, x),
         else => @compileError("cbrt not implemented for " ++ @typeName(T)),
     }
 }

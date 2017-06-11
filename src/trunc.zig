@@ -3,8 +3,8 @@ const fmath = @import("index.zig");
 pub fn trunc(x: var) -> @typeOf(x) {
     const T = @typeOf(x);
     switch (T) {
-        f32 => trunc32(x),
-        f64 => trunc64(x),
+        f32 => @inlineCall(trunc32, x),
+        f64 => @inlineCall(trunc64, x),
         else => @compileError("trunc not implemented for " ++ @typeName(T)),
     }
 }

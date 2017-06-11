@@ -2,8 +2,8 @@ const fmath = @import("index.zig");
 
 pub fn pow(comptime T: type, x: T, y: T) -> T {
     switch (T) {
-        f32 => pow32(x, y),
-        f64 => pow64(x, y),
+        f32 => @inlineCall(pow32, x, y),
+        f64 => @inlineCall(pow64, x, y),
         else => @compileError("pow not implemented for " ++ @typeName(T)),
     }
 }

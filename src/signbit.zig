@@ -3,8 +3,8 @@ const fmath = @import("index.zig");
 pub fn signbit(x: var) -> bool {
     const T = @typeOf(x);
     switch (T) {
-        f32 => signbit32(x),
-        f64 => signbit64(x),
+        f32 => @inlineCall(signbit32, x),
+        f64 => @inlineCall(signbit64, x),
         else => @compileError("signbit not implemented for " ++ @typeName(T)),
     }
 }

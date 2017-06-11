@@ -2,8 +2,8 @@ const fmath = @import("index.zig");
 
 pub fn fmod(comptime T: type, x: T, y: T) -> T {
     switch (T) {
-        f32 => fmod32(x, y),
-        f64 => fmod64(x, y),
+        f32 => @inlineCall(fmod32, x, y),
+        f64 => @inlineCall(fmod64, x, y),
         else => @compileError("fmod not implemented for " ++ @typeName(T)),
     }
 }

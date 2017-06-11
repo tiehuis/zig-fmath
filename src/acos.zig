@@ -3,8 +3,8 @@ const fmath = @import("index.zig");
 pub fn acos(x: var) -> @typeOf(x) {
     const T = @typeOf(x);
     switch (T) {
-        f32 => acos32(x),
-        f64 => acos64(x),
+        f32 => @inlineCall(acos32, x),
+        f64 => @inlineCall(acos64, x),
         else => @compileError("acos not implemented for " ++ @typeName(T)),
     }
 }

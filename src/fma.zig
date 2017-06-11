@@ -2,8 +2,8 @@ const fmath = @import("index.zig");
 
 pub fn fma(comptime T: type, x: T, y: T, z: T) -> T {
     switch (T) {
-        f32 => fma32(x, y, z),
-        f64 => fma64(x, y ,z),
+        f32 => @inlineCall(fma32, x, y, z),
+        f64 => @inlineCall(fma64, x, y ,z),
         else => @compileError("acos not implemented for " ++ @typeName(T)),
     }
 }

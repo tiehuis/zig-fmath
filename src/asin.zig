@@ -3,8 +3,8 @@ const fmath = @import("index.zig");
 pub fn asin(x: var) -> @typeOf(x) {
     const T = @typeOf(x);
     switch (T) {
-        f32 => asin32(x),
-        f64 => asin64(x),
+        f32 => @inlineCall(asin32, x),
+        f64 => @inlineCall(asin64, x),
         else => @compileError("asin not implemented for " ++ @typeName(T)),
     }
 }

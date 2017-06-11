@@ -3,8 +3,8 @@ const fmath = @import("index.zig");
 pub fn log1p(x: var) -> @typeOf(x) {
     const T = @typeOf(x);
     switch (T) {
-        f32 => log1pf(x),
-        f64 => log1pd(x),
+        f32 => @inlineCall(log1pf, x),
+        f64 => @inlineCall(log1pd, x),
         else => @compileError("log1p not implemented for " ++ @typeName(T)),
     }
 }

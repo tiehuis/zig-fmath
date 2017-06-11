@@ -3,8 +3,8 @@ const fmath = @import("index.zig");
 pub fn atan(x: var) -> @typeOf(x) {
     const T = @typeOf(x);
     switch (T) {
-        f32 => atan32(x),
-        f64 => atan64(x),
+        f32 => @inlineCall(atan32, x),
+        f64 => @inlineCall(atan64, x),
         else => @compileError("atan not implemented for " ++ @typeName(T)),
     }
 }

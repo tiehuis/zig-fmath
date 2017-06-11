@@ -2,8 +2,8 @@ const fmath = @import("index.zig");
 
 pub fn atan2(comptime T: type, x: T, y: T) -> T {
     switch (T) {
-        f32 => atan2f(x, y),
-        f64 => atan2d(x, y),
+        f32 => @inlineCall(atan2f, x, y),
+        f64 => @inlineCall(atan2d, x, y),
         else => @compileError("atan2 not implemented for " ++ @typeName(T)),
     }
 }

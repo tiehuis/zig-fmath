@@ -3,8 +3,8 @@ const fmath = @import("index.zig");
 pub fn exp(x: var) -> @typeOf(x) {
     const T = @typeOf(x);
     switch (T) {
-        f32 => exp32(x),
-        f64 => exp64(x),
+        f32 => @inlineCall(exp32, x),
+        f64 => @inlineCall(exp64, x),
         else => @compileError("exp not implemented for " ++ @typeName(T)),
     }
 }

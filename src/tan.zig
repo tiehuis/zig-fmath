@@ -3,8 +3,8 @@ const fmath = @import("index.zig");
 pub fn tan(x: var) -> @typeOf(x) {
     const T = @typeOf(x);
     switch (T) {
-        f32 => tan32(x),
-        f64 => tan64(x),
+        f32 => @inlineCall(tan32, x),
+        f64 => @inlineCall(tan64, x),
         else => @compileError("tan not implemented for " ++ @typeName(T)),
     }
 }

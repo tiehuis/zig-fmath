@@ -3,8 +3,8 @@ const fmath = @import("index.zig");
 pub fn frexp(x: var, e: &i32) -> @typeOf(x) {
     const T = @typeOf(x);
     switch (T) {
-        f32 => frexp32(x, e),
-        f64 => frexp64(x, e),
+        f32 => @inlineCall(frexp32, x, e),
+        f64 => @inlineCall(frexp64, x, e),
         else => @compileError("frexp not implemented for " ++ @typeName(T)),
     }
 }

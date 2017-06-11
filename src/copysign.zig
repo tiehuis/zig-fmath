@@ -2,8 +2,8 @@ const fmath = @import("index.zig");
 
 pub fn copysign(comptime T: type, x: T, y: T) -> T {
     switch (T) {
-        f32 => copysign32(x, y),
-        f64 => copysign64(x, y),
+        f32 => @inlineCall(copysign32, x, y),
+        f64 => @inlineCall(copysign64, x, y),
         else => @compileError("copysign not implemented for " ++ @typeName(T)),
     }
 }

@@ -2,8 +2,8 @@ const fmath = @import("index.zig");
 
 pub fn hypot(comptime T: type, x: T, y: T) -> T {
     switch (T) {
-        f32 => hypot32(x, y),
-        f64 => hypot64(x, y),
+        f32 => @inlineCall(hypot32, x, y),
+        f64 => @inlineCall(hypot64, x, y),
         else => @compileError("hypot not implemented for " ++ @typeName(T)),
     }
 }

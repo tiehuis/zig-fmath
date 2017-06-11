@@ -3,8 +3,8 @@ const fmath = @import("index.zig");
 pub fn acosh(x: var) -> @typeOf(x) {
     const T = @typeOf(x);
     switch (T) {
-        f32 => acoshf(x),
-        f64 => acoshd(x),
+        f32 => @inlineCall(acoshf, x),
+        f64 => @inlineCall(acoshd, x),
         else => @compileError("acosh not implemented for " ++ @typeName(T)),
     }
 }

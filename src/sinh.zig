@@ -4,8 +4,8 @@ const expo2 = @import("_expo2.zig").expo2;
 pub fn sinh(x: var) -> @typeOf(x) {
     const T = @typeOf(x);
     switch (T) {
-        f32 => sinhf(x),
-        f64 => sinhd(x),
+        f32 => @inlineCall(sinhf, x),
+        f64 => @inlineCall(sinhd, x),
         else => @compileError("sinh not implemented for " ++ @typeName(T)),
     }
 }

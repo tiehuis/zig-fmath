@@ -2,8 +2,8 @@ const fmath = @import("index.zig");
 
 pub fn modf(comptime T: type, x: T, intpart: &T) -> T {
     switch (T) {
-        f32 => modf32(x, intpart),
-        f64 => modf64(x, intpart),
+        f32 => @inlineCall(modf32, x, intpart),
+        f64 => @inlineCall(modf64, x, intpart),
         else => @compileError("modf not implemented for " ++ @typeName(T)),
     }
 }

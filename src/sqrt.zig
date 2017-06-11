@@ -3,8 +3,8 @@ const fmath = @import("index.zig");
 pub fn sqrt(x: var) -> @typeOf(x) {
     const T = @typeOf(x);
     switch (T) {
-        f32 => sqrt32(x),
-        f64 => sqrt64(x),
+        f32 => @inlineCall(sqrt32, x),
+        f64 => @inlineCall(sqrt64, x),
         else => @compileError("sqrt not implemented for " ++ @typeName(T)),
     }
 }

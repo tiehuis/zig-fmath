@@ -3,8 +3,8 @@ const fmath = @import("index.zig");
 pub fn scalbn(x: var, n: i32) -> @typeOf(x) {
     const T = @typeOf(x);
     switch (T) {
-        f32 => scalbn32(x, n),
-        f64 => scalbn64(x, n),
+        f32 => @inlineCall(scalbn32, x, n),
+        f64 => @inlineCall(scalbn64, x, n),
         else => @compileError("scalbn not implemented for " ++ @typeName(T)),
     }
 }

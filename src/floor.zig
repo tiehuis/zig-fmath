@@ -3,8 +3,8 @@ const fmath = @import("index.zig");
 pub fn floor(x: var) -> @typeOf(x) {
     const T = @typeOf(x);
     switch (T) {
-        f32 => floor32(x),
-        f64 => floor64(x),
+        f32 => @inlineCall(floor32, x),
+        f64 => @inlineCall(floor64, x),
         else => @compileError("floor not implemented for " ++ @typeName(T)),
     }
 }

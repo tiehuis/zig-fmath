@@ -3,8 +3,8 @@ const fmath = @import("index.zig");
 pub fn cos(x: var) -> @typeOf(x) {
     const T = @typeOf(x);
     switch (T) {
-        f32 => cos32(x),
-        f64 => cos64(x),
+        f32 => @inlineCall(cos32, x),
+        f64 => @inlineCall(cos64, x),
         else => @compileError("cos not implemented for " ++ @typeName(T)),
     }
 }

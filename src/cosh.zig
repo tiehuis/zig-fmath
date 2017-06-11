@@ -4,8 +4,8 @@ const expo2 = @import("_expo2.zig").expo2;
 pub fn cosh(x: var) -> @typeOf(x) {
     const T = @typeOf(x);
     switch (T) {
-        f32 => coshf(x),
-        f64 => coshd(x),
+        f32 => @inlineCall(coshf, x),
+        f64 => @inlineCall(coshd, x),
         else => @compileError("cosh not implemented for " ++ @typeName(T)),
     }
 }
