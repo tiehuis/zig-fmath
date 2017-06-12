@@ -9,9 +9,8 @@ pub fn pow(comptime T: type, x: T, y: T) -> T {
 }
 
 fn isOddInteger(x: f64) -> bool {
-    var xi: f64 = undefined;
-    const xf = fmath.modf(f64, x, &xi);
-    xf == 0.0 and i64(xi) & 1 == 1
+    const r = fmath.modf(x);
+    r.fpart == 0.0 and i64(r.ipart) & 1 == 1
 }
 
 // This implementation is taken from the go stlib, musl is a bit more complex.
@@ -100,8 +99,10 @@ fn pow32(x: f32, y: f32) -> f32 {
         flip = true;
     }
 
-    var yi: f32 = undefined;
-    var yf = fmath.modf(f32, ay, &yi);
+    const r1 = fmath.modf(ay);
+    var yi = r1.ipart;
+    var yf = r1.fpart;
+
     if (yf != 0 and x < 0) {
         return fmath.nan(f32);
     }
@@ -123,8 +124,9 @@ fn pow32(x: f32, y: f32) -> f32 {
     }
 
     // a *= x^yi
-    var xe: i32 = undefined;
-    var x1 = fmath.frexp(x, &xe);
+    const r2 = fmath.frexp(x);
+    var xe = r2.exponent;
+    var x1 = r2.significand;
 
     var i = i32(yi);
     while (i != 0) : (i >>= 1) {
@@ -235,8 +237,10 @@ fn pow64(x: f64, y: f64) -> f64 {
         flip = true;
     }
 
-    var yi: f64 = undefined;
-    var yf = fmath.modf(f64, ay, &yi);
+    const r1 = fmath.modf(ay);
+    var yi = r1.ipart;
+    var yf = r1.fpart;
+
     if (yf != 0 and x < 0) {
         return fmath.nan(f64);
     }
@@ -258,8 +262,9 @@ fn pow64(x: f64, y: f64) -> f64 {
     }
 
     // a *= x^yi
-    var xe: i32 = undefined;
-    var x1 = fmath.frexp(x, &xe);
+    const r2 = fmath.frexp(x);
+    var xe = r2.exponent;
+    var x1 = r2.significand;
 
     var i = i64(yi);
     while (i != 0) : (i >>= 1) {

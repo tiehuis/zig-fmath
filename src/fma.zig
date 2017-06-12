@@ -37,12 +37,16 @@ fn fma64(x: f64, y: f64, z: f64) -> f64 {
         return x * y;
     }
 
-    var ex: i32 = undefined;
-    var ey: i32 = undefined;
-    var ez: i32 = undefined;
-    var xs = fmath.frexp(x, &ex);
-    var ys = fmath.frexp(y, &ey);
-    var zs = fmath.frexp(z, &ez);
+    const x1 = fmath.frexp(x);
+    var ex = x1.exponent;
+    var xs = x1.significand;
+    const x2 = fmath.frexp(y);
+    var ey = x2.exponent;
+    var ys = x2.significand;
+    const x3 = fmath.frexp(z);
+    var ez = x3.exponent;
+    var zs = x3.significand;
+
     var spread = ex + ey - ez;
 
     // TODO: Other rounding modes handled edge cases here.
