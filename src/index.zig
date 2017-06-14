@@ -32,11 +32,18 @@ pub const f32_max = 3.40282346638528859812e+38;
 pub const f32_epsilon = 1.1920928955078125e-07;
 pub const f32_toint = 1.0 / f32_epsilon;
 
-// Insufficient comptime support for floating points cast?
 pub const nan_u32 = u32(0x7F800001);
+pub const nan_f32 = @bitCast(f32, nan_u32);
+
 pub const inf_u32 = u32(0x7F800000);
+pub const inf_f32 = @bitCast(f32, inf_u32);
+
 pub const nan_u64 = u64(0x7FF << 52) | 1;
+pub const nan_f64 = @bitCast(f64, nan_u64);
+
 pub const inf_u64 = u64(0x7FF << 52);
+pub const inf_f64 = @bitCast(f64, inf_u64);
+
 pub const nan = @import("nan.zig").nan;
 pub const inf = @import("inf.zig").inf;
 
