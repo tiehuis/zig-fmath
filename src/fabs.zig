@@ -10,15 +10,15 @@ pub fn fabs(x: var) -> @typeOf(x) {
 }
 
 fn fabs32(x: f32) -> f32 {
-    var u = fmath.bitCast(u32, x);
+    var u = @bitCast(u32, x);
     u &= 0x7FFFFFFF;
-    fmath.bitCast(f32, u)
+    @bitCast(f32, u)
 }
 
 fn fabs64(x: f64) -> f64 {
-    var u = fmath.bitCast(u64, x);
+    var u = @bitCast(u64, x);
     u &= @maxValue(u64) >> 1;
-    fmath.bitCast(f64, u)
+    @bitCast(f64, u)
 }
 
 test "fabs" {

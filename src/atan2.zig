@@ -16,8 +16,8 @@ fn atan2f(y: f32, x: f32) -> f32 {
         return x + y;
     }
 
-    var ix = fmath.bitCast(u32, x);
-    var iy = fmath.bitCast(u32, y);
+    var ix = @bitCast(u32, x);
+    var iy = @bitCast(u32, y);
 
     // x = 1.0
     if (ix == 0x3F800000) {
@@ -101,11 +101,11 @@ fn atan2d(y: f64, x: f64) -> f64 {
         return x + y;
     }
 
-    var ux = fmath.bitCast(u64, x);
+    var ux = @bitCast(u64, x);
     var ix = u32(ux >> 32);
     var lx = u32(ux & 0xFFFFFFFF);
 
-    var uy = fmath.bitCast(u64, y);
+    var uy = @bitCast(u64, y);
     var iy = u32(uy >> 32);
     var ly = u32(uy & 0xFFFFFFFF);
 

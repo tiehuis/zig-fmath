@@ -14,9 +14,9 @@ pub fn sinh(x: var) -> @typeOf(x) {
 //         = (exp(x) - 1 + (exp(x) - 1) / exp(x)) / 2
 //         = x + x^3 / 6 + o(x^5)
 fn sinhf(x: f32) -> f32 {
-    const u = fmath.bitCast(u32, x);
+    const u = @bitCast(u32, x);
     const ux = u & 0x7FFFFFFF;
-    const ax = fmath.bitCast(f32, ux);
+    const ax = @bitCast(f32, ux);
 
     var h: f32 = 0.5;
     if (u >> 31 != 0) {
@@ -41,9 +41,9 @@ fn sinhf(x: f32) -> f32 {
 }
 
 fn sinhd(x: f64) -> f64 {
-    const u = fmath.bitCast(u64, x);
+    const u = @bitCast(u64, x);
     const w = u32(u >> 32);
-    const ax = fmath.bitCast(f64, u & (@maxValue(u64) >> 1));
+    const ax = @bitCast(f64, u & (@maxValue(u64) >> 1));
 
     var h: f32 = 0.5;
     if (u >> 63 != 0) {

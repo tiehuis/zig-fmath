@@ -11,7 +11,7 @@ pub fn round(x: var) -> @typeOf(x) {
 
 fn round32(x_: f32) -> f32 {
     var x = x_;
-    const u = fmath.bitCast(u32, x);
+    const u = @bitCast(u32, x);
     const e = (u >> 23) & 0xFF;
     var y: f32 = undefined;
 
@@ -23,7 +23,7 @@ fn round32(x_: f32) -> f32 {
     }
     if (e < 0x7F-1) {
         fmath.forceEval(x + fmath.f32_toint);
-        return 0 * fmath.bitCast(f32, u);
+        return 0 * @bitCast(f32, u);
     }
 
     y = x + fmath.f32_toint - fmath.f32_toint - x;
@@ -44,7 +44,7 @@ fn round32(x_: f32) -> f32 {
 
 fn round64(x_: f64) -> f64 {
     var x = x_;
-    const u = fmath.bitCast(u64, x);
+    const u = @bitCast(u64, x);
     const e = (u >> 52) & 0x7FF;
     var y: f64 = undefined;
 
@@ -56,7 +56,7 @@ fn round64(x_: f64) -> f64 {
     }
     if (e < 0x3ff-1) {
         fmath.forceEval(x + fmath.f64_toint);
-        return 0 * fmath.bitCast(f64, u);
+        return 0 * @bitCast(f64, u);
     }
 
     y = x + fmath.f64_toint - fmath.f64_toint - x;

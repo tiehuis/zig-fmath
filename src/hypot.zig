@@ -9,8 +9,8 @@ pub fn hypot(comptime T: type, x: T, y: T) -> T {
 }
 
 fn hypot32(x: f32, y: f32) -> f32 {
-    var ux = fmath.bitCast(u32, x);
-    var uy = fmath.bitCast(u32, y);
+    var ux = @bitCast(u32, x);
+    var uy = @bitCast(u32, y);
 
     ux &= @maxValue(u32) >> 1;
     uy &= @maxValue(u32) >> 1;
@@ -20,8 +20,8 @@ fn hypot32(x: f32, y: f32) -> f32 {
         uy = tmp;
     }
 
-    var xx = fmath.bitCast(f32, ux);
-    var yy = fmath.bitCast(f32, uy);
+    var xx = @bitCast(f32, ux);
+    var yy = @bitCast(f32, uy);
     if (uy == 0xFF << 23) {
         return yy;
     }
@@ -53,8 +53,8 @@ fn sq(hi: &f64, lo: &f64, x: f64) {
 }
 
 fn hypot64(x: f64, y: f64) -> f64 {
-    var ux = fmath.bitCast(u64, x);
-    var uy = fmath.bitCast(u64, y);
+    var ux = @bitCast(u64, x);
+    var uy = @bitCast(u64, y);
 
     ux &= @maxValue(u64) >> 1;
     uy &= @maxValue(u64) >> 1;
@@ -66,8 +66,8 @@ fn hypot64(x: f64, y: f64) -> f64 {
 
     const ex = ux >> 52;
     const ey = uy >> 52;
-    var xx = fmath.bitCast(f64, ux);
-    var yy = fmath.bitCast(f64, uy);
+    var xx = @bitCast(f64, ux);
+    var yy = @bitCast(f64, uy);
 
     // hypot(inf, nan) == inf
     if (ey == 0x7FF) {

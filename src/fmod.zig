@@ -9,8 +9,8 @@ pub fn fmod(comptime T: type, x: T, y: T) -> T {
 }
 
 fn fmod32(x: f32, y: f32) -> f32 {
-    var ux = fmath.bitCast(u32, x);
-    var uy = fmath.bitCast(u32, y);
+    var ux = @bitCast(u32, x);
+    var uy = @bitCast(u32, y);
     var ex = i32(ux >> 23) & 0xFF;
     var ey = i32(ux >> 23) & 0xFF;
     const sx = ux & 0x80000000;
@@ -83,12 +83,12 @@ fn fmod32(x: f32, y: f32) -> f32 {
     }
 
     ux |= sx;
-    fmath.bitCast(f32, ux)
+    @bitCast(f32, ux)
 }
 
 fn fmod64(x: f64, y: f64) -> f64 {
-    var ux = fmath.bitCast(u64, x);
-    var uy = fmath.bitCast(u64, y);
+    var ux = @bitCast(u64, x);
+    var uy = @bitCast(u64, y);
     var ex = i32(ux >> 52) & 0x7FF;
     var ey = i32(ux >> 52) & 0x7FF;
     const sx = ux >> 63;
@@ -161,7 +161,7 @@ fn fmod64(x: f64, y: f64) -> f64 {
     }
 
     ux |= sx << 63;
-    fmath.bitCast(f64, ux)
+    @bitCast(f64, ux)
 }
 
 // duplicate symbol clash with `fmod` test name

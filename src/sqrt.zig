@@ -11,8 +11,8 @@ pub fn sqrt(x: var) -> @typeOf(x) {
 
 fn sqrt32(x: f32) -> f32 {
     const tiny: f32 = 1.0e-30;
-    const sign: i32 = fmath.bitCast(i32, u32(0x80000000));
-    var ix: i32 = fmath.bitCast(i32, x);
+    const sign: i32 = @bitCast(i32, u32(0x80000000));
+    var ix: i32 = @bitCast(i32, x);
 
     if ((ix & 0x7F800000) == 0x7F800000) {
         return x * x + x;   // sqrt(nan) = nan, sqrt(+inf) = +inf, sqrt(-inf) = snan
@@ -82,7 +82,7 @@ fn sqrt32(x: f32) -> f32 {
 
     ix = (q >> 1) + 0x3f000000;
     ix += m << 23;
-    fmath.bitCast(f32, ix)
+    @bitCast(f32, ix)
 }
 
 // NOTE: The original code is full of implicit signed -> unsigned assumptions and u32 wraparound
@@ -91,7 +91,7 @@ fn sqrt32(x: f32) -> f32 {
 fn sqrt64(x: f64) -> f64 {
     const tiny: f64 = 1.0e-300;
     const sign: u32 = 0x80000000;
-    const u = fmath.bitCast(u64, x);
+    const u = @bitCast(u64, x);
 
     var ix0 = u32(u >> 32);
     var ix1 = u32(u & 0xFFFFFFFF);
@@ -215,7 +215,7 @@ fn sqrt64(x: f64) -> f64 {
     iix0 = iix0 +% (m << 20);
 
     const uz = (u64(iix0) << 32) | ix1;
-    fmath.bitCast(f64, uz)
+    @bitCast(f64, uz)
 }
 
 test "sqrt" {

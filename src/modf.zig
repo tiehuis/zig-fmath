@@ -21,7 +21,7 @@ pub fn modf(x: var) -> modf_result(@typeOf(x)) {
 fn modf32(x: f32) -> modf32_result {
     var result: modf32_result = undefined;
 
-    const u = fmath.bitCast(u32, x);
+    const u = @bitCast(u32, x);
     const e = i32((u >> 23) & 0xFF) - 0x7F;
     const us = u & 0x80000000;
 
@@ -31,14 +31,14 @@ fn modf32(x: f32) -> modf32_result {
         if (e == 0x80 and u << 9 != 0) { // nan
             result.fpart = x;
         } else {
-            result.fpart = fmath.bitCast(f32, us);
+            result.fpart = @bitCast(f32, us);
         }
         return result;
     }
 
     // no integral part
     if (e < 0) {
-        result.ipart = fmath.bitCast(f32, us);
+        result.ipart = @bitCast(f32, us);
         result.fpart = x;
         return result;
     }
@@ -46,11 +46,11 @@ fn modf32(x: f32) -> modf32_result {
     const mask = 0x007FFFFF >> u32(e);
     if (u & mask == 0) {
         result.ipart = x;
-        result.fpart = fmath.bitCast(f32, us);
+        result.fpart = @bitCast(f32, us);
         return result;
     }
 
-    const uf = fmath.bitCast(f32, u & ~mask);
+    const uf = @bitCast(f32, u & ~mask);
     result.ipart = uf;
     result.fpart = x - uf;
     result
@@ -59,7 +59,7 @@ fn modf32(x: f32) -> modf32_result {
 fn modf64(x: f64) -> modf64_result {
     var result: modf64_result = undefined;
 
-    const u = fmath.bitCast(u64, x);
+    const u = @bitCast(u64, x);
     const e = i32((u >> 52) & 0x7FF) - 0x3FF;
     const us = u & (1 << 63);
 
@@ -69,14 +69,14 @@ fn modf64(x: f64) -> modf64_result {
         if (e == 0x400 and u << 12 != 0) { // nan
             result.fpart = x;
         } else {
-            result.fpart = fmath.bitCast(f64, us);
+            result.fpart = @bitCast(f64, us);
         }
         return result;
     }
 
     // no integral part
     if (e < 0) {
-        result.ipart = fmath.bitCast(f64, us);
+        result.ipart = @bitCast(f64, us);
         result.fpart = x;
         return result;
     }
@@ -84,11 +84,11 @@ fn modf64(x: f64) -> modf64_result {
     const mask = @maxValue(u64) >> 12 >> u64(e);
     if (u & mask == 0) {
         result.ipart = x;
-        result.fpart = fmath.bitCast(f64, us);
+        result.fpart = @bitCast(f64, us);
         return result;
     }
 
-    const uf = fmath.bitCast(f64, u & ~mask);
+    const uf = @bitCast(f64, u & ~mask);
     result.ipart = uf;
     result.fpart = x - uf;
     result

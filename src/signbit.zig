@@ -10,12 +10,12 @@ pub fn signbit(x: var) -> bool {
 }
 
 fn signbit32(x: f32) -> bool {
-    const bits = fmath.bitCast(u32, x);
+    const bits = @bitCast(u32, x);
     bits >> 31 != 0
 }
 
 fn signbit64(x: f64) -> bool {
-    const bits = fmath.bitCast(u64, x);
+    const bits = @bitCast(u64, x);
     bits >> 63 != 0
 }
 

@@ -14,7 +14,7 @@ const fp_ilogbnan = -1 - i32(@maxValue(u32) >> 1);
 const fp_ilogb0 = fp_ilogbnan;
 
 fn ilogb32(x: f32) -> i32 {
-    var u = fmath.bitCast(u32, x);
+    var u = @bitCast(u32, x);
     var e = i32((u >> 23) & 0xFF);
 
     if (e == 0) {
@@ -45,7 +45,7 @@ fn ilogb32(x: f32) -> i32 {
 }
 
 fn ilogb64(x: f64) -> i32 {
-    var u = fmath.bitCast(u64, x);
+    var u = @bitCast(u64, x);
     var e = i32((u >> 52) & 0x7FF);
 
     if (e == 0) {

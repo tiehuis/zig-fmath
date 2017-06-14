@@ -11,11 +11,11 @@ pub fn atanh(x: var) -> @typeOf(x) {
 
 // atanh(x) = log((1 + x) / (1 - x)) / 2 = log1p(2x / (1 - x)) / 2 ~= x + x^3 / 3 + o(x^5)
 fn atanhf(x: f32) -> f32 {
-    const u = fmath.bitCast(u32, x);
+    const u = @bitCast(u32, x);
     const i = u & 0x7FFFFFFF;
     const s = u >> 31;
 
-    var y = fmath.bitCast(f32, i); // |x|
+    var y = @bitCast(f32, i); // |x|
 
     if (u < 0x3F800000 - (1 << 23)) {
         if (u < 0x3F800000 - (32 << 23)) {
@@ -37,11 +37,11 @@ fn atanhf(x: f32) -> f32 {
 }
 
 fn atanhd(x: f64) -> f64 {
-    const u = fmath.bitCast(u64, x);
+    const u = @bitCast(u64, x);
     const e = (u >> 52) & 0x7FF;
     const s = u >> 63;
 
-    var y = fmath.bitCast(f64, u & (@maxValue(u64) >> 1)); // |x|
+    var y = @bitCast(f64, u & (@maxValue(u64) >> 1)); // |x|
 
     if (e < 0x3FF - 1) {
         if (e < 0x3FF - 32) {

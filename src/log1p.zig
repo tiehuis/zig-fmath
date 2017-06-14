@@ -17,7 +17,7 @@ fn log1pf(x: f32) -> f32 {
     const Lg3: f32 = 0x91e9ee.0p-25;
     const Lg4: f32 = 0xf89e26.0p-26;
 
-    const u = fmath.bitCast(u32, x);
+    const u = @bitCast(u32, x);
     var ix = u;
     var k: i32 = 1;
     var f: f32 = undefined;
@@ -56,7 +56,7 @@ fn log1pf(x: f32) -> f32 {
 
     if (k != 0) {
         const uf = 1 + x;
-        var iu = fmath.bitCast(u32, uf);
+        var iu = @bitCast(u32, uf);
         iu += 0x3F800000 - 0x3F3504F3;
         k = i32(iu >> 23) - 0x7F;
 
@@ -70,7 +70,7 @@ fn log1pf(x: f32) -> f32 {
 
         // u into [sqrt(2)/2, sqrt(2)]
         iu = (iu & 0x007FFFFF) + 0x3F3504F3;
-        f = fmath.bitCast(f32, iu) - 1;
+        f = @bitCast(f32, iu) - 1;
     }
 
     const s = f / (2.0 + f);
@@ -96,7 +96,7 @@ fn log1pd(x: f64) -> f64 {
     const Lg6: f64 = 1.531383769920937332e-01;
     const Lg7: f64 = 1.479819860511658591e-01;
 
-    var ix = fmath.bitCast(u64, x);
+    var ix = @bitCast(u64, x);
     var hx = u32(ix >> 32);
     var k: i32 = 1;
     var c: f64 = undefined;
@@ -135,7 +135,7 @@ fn log1pd(x: f64) -> f64 {
 
     if (k != 0) {
         const uf = 1 + x;
-        const hu = fmath.bitCast(u64, uf);
+        const hu = @bitCast(u64, uf);
         var iu = u32(hu >> 32);
         iu += 0x3FF00000 - 0x3FE6A09E;
         k = i32(iu >> 20) - 0x3FF;
@@ -151,7 +151,7 @@ fn log1pd(x: f64) -> f64 {
         // u into [sqrt(2)/2, sqrt(2)]
         iu = (iu & 0x000FFFFF) + 0x3FE6A09E;
         const iq = (u64(iu) << 32) | (hu & 0xFFFFFFFF);
-        f = fmath.bitCast(f64, iq) - 1;
+        f = @bitCast(f64, iq) - 1;
     }
 
     const hfsq = 0.5 * f * f;

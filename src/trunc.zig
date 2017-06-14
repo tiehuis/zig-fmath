@@ -10,7 +10,7 @@ pub fn trunc(x: var) -> @typeOf(x) {
 }
 
 fn trunc32(x: f32) -> f32 {
-    const u = fmath.bitCast(u32, x);
+    const u = @bitCast(u32, x);
     var e = i32(((u >> 23) & 0xFF)) - 0x7F + 9;
     var m: u32 = undefined;
 
@@ -26,12 +26,12 @@ fn trunc32(x: f32) -> f32 {
         x
     } else {
         fmath.forceEval(x + 0x1p120);
-        fmath.bitCast(f32, u & ~m)
+        @bitCast(f32, u & ~m)
     }
 }
 
 fn trunc64(x: f64) -> f64 {
-    const u = fmath.bitCast(u64, x);
+    const u = @bitCast(u64, x);
     var e = i32(((u >> 52) & 0x7FF)) - 0x3FF + 12;
     var m: u64 = undefined;
 
@@ -47,7 +47,7 @@ fn trunc64(x: f64) -> f64 {
         x
     } else {
         fmath.forceEval(x + 0x1p120);
-        fmath.bitCast(f64, u & ~m)
+        @bitCast(f64, u & ~m)
     }
 }
 

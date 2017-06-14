@@ -4,11 +4,11 @@ pub fn isNormal(x: var) -> bool {
     const T = @typeOf(x);
     switch (T) {
         f32 => {
-            const bits = fmath.bitCast(u32, x);
+            const bits = @bitCast(u32, x);
             (bits + 0x00800000) & 0x7FFFFFFF >= 0x01000000
         },
         f64 => {
-            const bits = fmath.bitCast(u64, x);
+            const bits = @bitCast(u64, x);
             (bits + (1 << 52)) & (@maxValue(u64) >> 1) >= (1 << 53)
         },
         else => {

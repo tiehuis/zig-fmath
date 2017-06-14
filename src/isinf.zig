@@ -4,11 +4,11 @@ pub fn isInf(x: var) -> bool {
     const T = @typeOf(x);
     switch (T) {
         f32 => {
-            const bits = fmath.bitCast(u32, x);
+            const bits = @bitCast(u32, x);
             bits & 0x7FFFFFFF == 0x7F800000
         },
         f64 => {
-            const bits = fmath.bitCast(u64, x);
+            const bits = @bitCast(u64, x);
             bits & (@maxValue(u64) >> 1) == (0x7FF << 52)
         },
         else => {
@@ -21,10 +21,10 @@ pub fn isPositiveInf(x: var) -> bool {
     const T = @typeOf(x);
     switch (T) {
         f32 => {
-            fmath.bitCast(u32, x) == 0x7F800000
+            @bitCast(u32, x) == 0x7F800000
         },
         f64 => {
-            fmath.bitCast(u64, x) == 0x7FF << 52
+            @bitCast(u64, x) == 0x7FF << 52
         },
         else => {
             @compileError("isPositiveInf not implemented for " ++ @typeName(T));
@@ -36,10 +36,10 @@ pub fn isNegativeInf(x: var) -> bool {
     const T = @typeOf(x);
     switch (T) {
         f32 => {
-            fmath.bitCast(u32, x) == 0xFF800000
+            @bitCast(u32, x) == 0xFF800000
         },
         f64 => {
-            fmath.bitCast(u64, x) == 0xFFF << 52
+            @bitCast(u64, x) == 0xFFF << 52
         },
         else => {
             @compileError("isNegativeInf not implemented for " ++ @typeName(T));

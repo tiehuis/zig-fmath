@@ -13,7 +13,7 @@ fn cbrt32(x: f32) -> f32 {
     const B1: u32 = 709958130; // (127 - 127.0 / 3 - 0.03306235651) * 2^23
     const B2: u32 = 642849266; // (127 - 127.0 / 3 - 24 / 3 - 0.03306235651) * 2^23
 
-    var u = fmath.bitCast(u32, x);
+    var u = @bitCast(u32, x);
     var hx = u & 0x7FFFFFFF;
 
     // cbrt(nan, inf) = itself
@@ -27,7 +27,7 @@ fn cbrt32(x: f32) -> f32 {
         if (hx == 0) {
             return x;
         }
-        u = fmath.bitCast(u32, x * 0x1.0p24);
+        u = @bitCast(u32, x * 0x1.0p24);
         hx = u & 0x7FFFFFFF;
         hx = hx / 3 + B2;
     } else {
@@ -38,7 +38,7 @@ fn cbrt32(x: f32) -> f32 {
     u |= hx;
 
     // first step newton to 16 bits
-    var t: f64 = fmath.bitCast(f32, u);
+    var t: f64 = @bitCast(f32, u);
     var r: f64 = t * t * t;
     t = t * (f64(x) + x + r) / (x + r + r);
 
@@ -60,7 +60,7 @@ fn cbrt64(x: f64) -> f64 {
     const P3: f64 = -0.758397934778766047437;
     const P4: f64 =  0.145996192886612446982;
 
-    var u = fmath.bitCast(u64, x);
+    var u = @bitCast(u64, x);
     var hx = u32(u >> 32) & 0x7FFFFFFF;
 
     // cbrt(nan, inf) = itself
@@ -70,7 +70,7 @@ fn cbrt64(x: f64) -> f64 {
 
     // cbrt to ~5bits
     if (hx < 0x00100000) {
-        u = fmath.bitCast(u64, x * 0x1.0p54);
+        u = @bitCast(u64, x * 0x1.0p54);
         hx = u32(u >> 32) & 0x7FFFFFFF;
 
         // cbrt(0) is itself
@@ -84,7 +84,7 @@ fn cbrt64(x: f64) -> f64 {
 
     u &= 1 << 63;
     u |= u64(hx) << 32;
-    var t = fmath.bitCast(f64, u);
+    var t = @bitCast(f64, u);
 
     // cbrt to 23 bits
     // cbrt(x) = t * cbrt(x / t^3) ~= t * P(t^3 / x)
@@ -92,9 +92,9 @@ fn cbrt64(x: f64) -> f64 {
     t = t * ((P0 + r * (P1 + r * P2)) + ((r * r) * r) * (P3 + r * P4));
 
     // Round t away from 0 to 23 bits
-    u = fmath.bitCast(u64, t);
+    u = @bitCast(u64, t);
     u = (u + 0x80000000) & 0xFFFFFFFFC0000000;
-    t = fmath.bitCast(f64, u);
+    t = @bitCast(f64, u);
 
     // one step newton to 53 bits
     const s = t * t;

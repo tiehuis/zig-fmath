@@ -56,11 +56,6 @@ pub fn forceEval(value: var) {
     }
 }
 
-pub fn bitCast(comptime DestType: type, value: var) -> DestType {
-    assert(@sizeOf(DestType) == @sizeOf(@typeOf(value)));
-    return *@ptrCast(&const DestType, &value);
-}
-
 pub fn approxEq(comptime T: type, x: T, y: T, epsilon: T) -> bool {
     assert(@typeId(T) == TypeId.Float);
     fabs(x - y) < epsilon

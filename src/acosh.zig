@@ -11,7 +11,7 @@ pub fn acosh(x: var) -> @typeOf(x) {
 
 // acosh(x) = log(x + sqrt(x * x - 1))
 fn acoshf(x: f32) -> f32 {
-    const u = fmath.bitCast(u32, x);
+    const u = @bitCast(u32, x);
     const i = u & 0x7FFFFFFF;
 
     // |x| < 2, invalid if x < 1 or nan
@@ -29,7 +29,7 @@ fn acoshf(x: f32) -> f32 {
 }
 
 fn acoshd(x: f64) -> f64 {
-    const u = fmath.bitCast(u64, x);
+    const u = @bitCast(u64, x);
     const e = (u >> 52) & 0x7FF;
 
     // |x| < 2, invalid if x < 1 or nan

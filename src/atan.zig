@@ -33,7 +33,7 @@ fn atan32(x_: f32) -> f32 {
     };
 
     var x = x_;
-    var ix: u32 = fmath.bitCast(u32, x);
+    var ix: u32 = @bitCast(u32, x);
     const sign = ix >> 31;
     ix &= 0x7FFFFFFF;
 
@@ -131,7 +131,7 @@ fn atan64(x_: f64) -> f64 {
     };
 
     var x = x_;
-    var ux = fmath.bitCast(u64, x);
+    var ux = @bitCast(u64, x);
     var ix = u32(ux >> 32);
     const sign = ix >> 31;
     ix &= 0x7FFFFFFF;

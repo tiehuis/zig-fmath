@@ -10,7 +10,7 @@ pub fn ceil(x: var) -> @typeOf(x) {
 }
 
 fn ceil32(x: f32) -> f32 {
-    var u = fmath.bitCast(u32, x);
+    var u = @bitCast(u32, x);
     var e = i32((u >> 23) & 0xFF) - 0x7F;
     var m: u32 = undefined;
 
@@ -27,7 +27,7 @@ fn ceil32(x: f32) -> f32 {
             u += m;
         }
         u &= ~m;
-        fmath.bitCast(f32, u)
+        @bitCast(f32, u)
     } else {
         fmath.forceEval(x + 0x1.0p120);
         if (u >> 31 != 0) {
@@ -39,7 +39,7 @@ fn ceil32(x: f32) -> f32 {
 }
 
 fn ceil64(x: f64) -> f64 {
-    const u = fmath.bitCast(u64, x);
+    const u = @bitCast(u64, x);
     const e = (u >> 52) & 0x7FF;
     var y: f64 = undefined;
 

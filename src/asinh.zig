@@ -11,11 +11,11 @@ pub fn asinh(x: var) -> @typeOf(x) {
 
 // asinh(x) = sign(x) * log(|x| + sqrt(x * x + 1)) ~= x - x^3/6 + o(x^5)
 fn asinhf(x: f32) -> f32 {
-    const u = fmath.bitCast(u32, x);
+    const u = @bitCast(u32, x);
     const i = u & 0x7FFFFFFF;
     const s = i >> 31;
 
-    var rx = fmath.bitCast(f32, i); // |x|
+    var rx = @bitCast(f32, i); // |x|
 
     // |x| >= 0x1p12 or inf or nan
     if (i >= 0x3F800000 + (12 << 23)) {
@@ -38,11 +38,11 @@ fn asinhf(x: f32) -> f32 {
 }
 
 fn asinhd(x: f64) -> f64 {
-    const u = fmath.bitCast(u64, x);
+    const u = @bitCast(u64, x);
     const e = (u >> 52) & 0x7FF;
     const s = u >> 63;
 
-    var rx = fmath.bitCast(f64, u & (@maxValue(u64) >> 1)); // |x|
+    var rx = @bitCast(f64, u & (@maxValue(u64) >> 1)); // |x|
 
     // |x| >= 0x1p26 or inf or nan
     if (e >= 0x3FF + 26) {

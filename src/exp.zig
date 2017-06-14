@@ -18,7 +18,7 @@ fn exp32(x_: f32) -> f32 {
     const P2 = -2.7667332906e-3;
 
     var x = x_;
-    var hx = fmath.bitCast(u32, x);
+    var hx = @bitCast(u32, x);
     const sign = i32(hx >> 31);
     hx &= 0x7FFFFFFF;
 
@@ -94,7 +94,7 @@ fn exp64(x_: f64) -> f64 {
     const P5: f64   =  4.13813679705723846039e-08;
 
     var x = x_;
-    var ux = fmath.bitCast(u64, x);
+    var ux = @bitCast(u64, x);
     var hx = ux >> 32;
     const sign = i32(hx >> 31);
     hx &= 0x7FFFFFFF;

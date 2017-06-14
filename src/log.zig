@@ -18,7 +18,7 @@ fn logf(x_: f32) -> f32 {
     const Lg4: f32 = 0xf89e26.0p-26;
 
     var x = x_;
-    var ix = fmath.bitCast(u32, x);
+    var ix = @bitCast(u32, x);
     var k: i32 = 0;
 
     // x < 2^(-126)
@@ -35,7 +35,7 @@ fn logf(x_: f32) -> f32 {
         // subnormal, scale x
         k -= 25;
         x *= 0x1.0p25;
-        ix = fmath.bitCast(u32, x);
+        ix = @bitCast(u32, x);
     } else if (ix >= 0x7F800000) {
         return x;
     } else if (ix == 0x3F800000) {
@@ -46,7 +46,7 @@ fn logf(x_: f32) -> f32 {
     ix += 0x3F800000 - 0x3F3504F3;
     k += i32(ix >> 23) - 0x7F;
     ix = (ix & 0x007FFFFF) + 0x3F3504F3;
-    x = fmath.bitCast(f32, ix);
+    x = @bitCast(f32, ix);
 
     const f = x - 1.0;
     const s = f / (2.0 + f);
@@ -73,7 +73,7 @@ fn logd(x_: f64) -> f64 {
     const Lg7: f64 = 1.479819860511658591e-01;
 
     var x = x_;
-    var ix = fmath.bitCast(u64, x);
+    var ix = @bitCast(u64, x);
     var hx = u32(ix >> 32);
     var k: i32 = 0;
 
@@ -90,7 +90,7 @@ fn logd(x_: f64) -> f64 {
         // subnormal, scale x
         k -= 54;
         x *= 0x1.0p54;
-        hx = fmath.bitCast(u32, ix >> 32);
+        hx = u32(@bitCast(u64, ix) >> 32)
     }
     else if (hx >= 0x7FF00000) {
         return x;
@@ -104,7 +104,7 @@ fn logd(x_: f64) -> f64 {
     k += i32(hx >> 20) - 0x3FF;
     hx = (hx & 0x000FFFFF) + 0x3FE6A09E;
     ix = (u64(hx) << 32) | (ix & 0xFFFFFFFF);
-    x = fmath.bitCast(f64, ix);
+    x = @bitCast(f64, ix);
 
     const f = x - 1.0;
     const hfsq = 0.5 * f * f;

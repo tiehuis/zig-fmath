@@ -18,7 +18,7 @@ fn expm1f(x_: f32) -> f32 {
     const Q2: f32 =  1.5807170421e-3;
 
     var x = x_;
-    const ux = fmath.bitCast(u32, x);
+    const ux = @bitCast(u32, x);
     const hx = ux & 0x7FFFFFFF;
     const sign = hx >> 31;
 
@@ -109,7 +109,7 @@ fn expm1f(x_: f32) -> f32 {
         }
     }
 
-    const twopk = fmath.bitCast(f32, u32(0x7F + k) << 23);
+    const twopk = @bitCast(f32, u32(0x7F + k) << 23);
 
     if (k < 0 or k > 56) {
         var y = x - e + 1.0;
@@ -122,7 +122,7 @@ fn expm1f(x_: f32) -> f32 {
         return y - 1.0;
     }
 
-    const uf = fmath.bitCast(f32, u32(0x7F - k) << 23);
+    const uf = @bitCast(f32, u32(0x7F - k) << 23);
     if (k < 23) {
         return (x - e + (1 - uf)) * twopk;
     } else {
@@ -142,7 +142,7 @@ fn expm1d(x_: f64) -> f64 {
     const Q5: f64 = -2.01099218183624371326e-07;
 
     var x = x_;
-    const ux = fmath.bitCast(u64, x);
+    const ux = @bitCast(u64, x);
     const hx = u32(ux >> 32) & 0x7FFFFFFF;
     const sign = hx >> 63;
 
@@ -234,7 +234,7 @@ fn expm1d(x_: f64) -> f64 {
         }
     }
 
-    const twopk = fmath.bitCast(f64, u64(0x3FF + k) << 52);
+    const twopk = @bitCast(f64, u64(0x3FF + k) << 52);
 
     if (k < 0 or k > 56) {
         var y = x - e + 1.0;
@@ -247,7 +247,7 @@ fn expm1d(x_: f64) -> f64 {
         return y - 1.0;
     }
 
-    const uf = fmath.bitCast(f64, u64(0x3FF - k) << 52);
+    const uf = @bitCast(f64, u64(0x3FF - k) << 52);
     if (k < 20) {
         return (x - e + (1 - uf)) * twopk;
     } else {

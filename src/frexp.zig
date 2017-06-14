@@ -21,7 +21,7 @@ pub fn frexp(x: var) -> frexp_result(@typeOf(x)) {
 fn frexp32(x: f32) -> frexp32_result {
     var result: frexp32_result = undefined;
 
-    var y = fmath.bitCast(u32, x);
+    var y = @bitCast(u32, x);
     const e = i32(y >> 23) & 0xFF;
 
     if (e == 0) {
@@ -45,14 +45,14 @@ fn frexp32(x: f32) -> frexp32_result {
     result.exponent = e - 0x7E;
     y &= 0x807FFFFF;
     y |= 0x3F000000;
-    result.significand = fmath.bitCast(f32, y);
+    result.significand = @bitCast(f32, y);
     result
 }
 
 fn frexp64(x: f64) -> frexp64_result {
     var result: frexp64_result = undefined;
 
-    var y = fmath.bitCast(u64, x);
+    var y = @bitCast(u64, x);
     const e = i32(y >> 52) & 0x7FF;
 
     if (e == 0) {
@@ -75,7 +75,7 @@ fn frexp64(x: f64) -> frexp64_result {
     result.exponent = e - 0x3FE;
     y &= 0x800FFFFFFFFFFFFF;
     y |= 0x3FE0000000000000;
-    result.significand = fmath.bitCast(f64, y);
+    result.significand = @bitCast(f64, y);
     result
 }
 

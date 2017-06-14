@@ -14,9 +14,9 @@ pub fn cosh(x: var) -> @typeOf(x) {
 //         = 1 + 0.5 * (exp(x) - 1) * (exp(x) - 1) / exp(x)
 //         = 1 + (x * x) / 2 + o(x^4)
 fn coshf(x: f32) -> f32 {
-    const u = fmath.bitCast(u32, x);
+    const u = @bitCast(u32, x);
     const ux = u & 0x7FFFFFFF;
-    const ax = fmath.bitCast(f32, ux);
+    const ax = @bitCast(f32, ux);
 
     // |x| < log(2)
     if (ux < 0x3F317217) {
@@ -39,9 +39,9 @@ fn coshf(x: f32) -> f32 {
 }
 
 fn coshd(x: f64) -> f64 {
-    const u = fmath.bitCast(u64, x);
+    const u = @bitCast(u64, x);
     const w = u32(u >> 32);
-    const ax = fmath.bitCast(f64, u & (@maxValue(u64) >> 1));
+    const ax = @bitCast(f64, u & (@maxValue(u64) >> 1));
 
     // |x| < log(2)
     if (w < 0x3FE62E42) {

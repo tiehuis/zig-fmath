@@ -18,7 +18,7 @@ fn log2f(x_: f32) -> f32 {
     const Lg4: f32 = 0xf89e26.0p-26;
 
     var x = x_;
-    var u = fmath.bitCast(u32, x);
+    var u = @bitCast(u32, x);
     var ix = u;
     var k: i32 = 0;
 
@@ -35,7 +35,7 @@ fn log2f(x_: f32) -> f32 {
 
         k -= 25;
         x *= 0x1.0p25;
-        ix = fmath.bitCast(u32, x);
+        ix = @bitCast(u32, x);
     } else if (ix >= 0x7F800000) {
         return x;
     } else if (ix == 0x3F800000) {
@@ -46,7 +46,7 @@ fn log2f(x_: f32) -> f32 {
     ix += 0x3F800000 - 0x3F3504F3;
     k += i32(ix >> 23) - 0x7F;
     ix = (ix & 0x007FFFFF) + 0x3F3504F3;
-    x = fmath.bitCast(f32, ix);
+    x = @bitCast(f32, ix);
 
     const f = x - 1.0;
     const s = f / (2.0 + f);
@@ -58,9 +58,9 @@ fn log2f(x_: f32) -> f32 {
     const hfsq = 0.5 * f * f;
 
     var hi = f - hfsq;
-    u = fmath.bitCast(u32, hi);
+    u = @bitCast(u32, hi);
     u &= 0xFFFFF000;
-    hi = fmath.bitCast(f32, u);
+    hi = @bitCast(f32, u);
     const lo = f - hi - hfsq + s * (hfsq + R);
     (lo + hi) * ivln2lo + lo * ivln2hi + hi * ivln2hi + f32(k)
 }
@@ -77,7 +77,7 @@ fn log2d(x_: f64) -> f64 {
     const Lg7: f64 = 1.479819860511658591e-01;
 
     var x = x_;
-    var ix = fmath.bitCast(u64, x);
+    var ix = @bitCast(u64, x);
     var hx = u32(ix >> 32);
     var k: i32 = 0;
 
@@ -94,7 +94,7 @@ fn log2d(x_: f64) -> f64 {
         // subnormal, scale x
         k -= 54;
         x *= 0x1.0p54;
-        hx = fmath.bitCast(u32, ix >> 32);
+        hx = u32(@bitCast(u64, x) >> 32);
     }
     else if (hx >= 0x7FF00000) {
         return x;
@@ -108,7 +108,7 @@ fn log2d(x_: f64) -> f64 {
     k += i32(hx >> 20) - 0x3FF;
     hx = (hx & 0x000FFFFF) + 0x3FE6A09E;
     ix = (u64(hx) << 32) | (ix & 0xFFFFFFFF);
-    x = fmath.bitCast(f64, ix);
+    x = @bitCast(f64, ix);
 
     const f = x - 1.0;
     const hfsq = 0.5 * f * f;
@@ -121,9 +121,9 @@ fn log2d(x_: f64) -> f64 {
 
     // hi + lo = f - hfsq + s * (hfsq + R) ~ log(1 + f)
     var hi = f - hfsq;
-    var hii = fmath.bitCast(u64, hi);
+    var hii = @bitCast(u64, hi);
     hii &= @maxValue(u64) << 32;
-    hi = fmath.bitCast(f64, hii);
+    hi = @bitCast(f64, hii);
     const lo = f - hi - hfsq + s * (hfsq + R);
 
     var val_hi = hi * ivln2hi;

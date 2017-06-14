@@ -14,9 +14,9 @@ pub fn tanh(x: var) -> @typeOf(x) {
 //         = (exp(2x) - 1) / (exp(2x) - 1 + 2)
 //         = (1 - exp(-2x)) / (exp(-2x) - 1 + 2)
 fn tanhf(x: f32) -> f32 {
-    const u = fmath.bitCast(u32, x);
+    const u = @bitCast(u32, x);
     const ux = u & 0x7FFFFFFF;
-    const ax = fmath.bitCast(f32, ux);
+    const ax = @bitCast(f32, ux);
 
     var t: f32 = undefined;
 
@@ -54,9 +54,9 @@ fn tanhf(x: f32) -> f32 {
 }
 
 fn tanhd(x: f64) -> f64 {
-    const u = fmath.bitCast(u64, x);
+    const u = @bitCast(u64, x);
     const w = u32(u >> 32);
-    const ax = fmath.bitCast(f64, u & (@maxValue(u64) >> 1));
+    const ax = @bitCast(f64, u & (@maxValue(u64) >> 1));
 
     var t: f64 = undefined;
 

@@ -36,7 +36,7 @@ fn exp2f(x: f32) -> f32 {
     const P3: f32 = 0x1.c6b348p-5;
     const P4: f32 = 0x1.3b2c9cp-7;
 
-    var u = fmath.bitCast(u32, x);
+    var u = @bitCast(u32, x);
     const ix = u & 0x7FFFFFFF;
 
     // |x| > 126
@@ -66,13 +66,13 @@ fn exp2f(x: f32) -> f32 {
     }
 
     var uf = x + redux;
-    var i0 = fmath.bitCast(u32, uf);
+    var i0 = @bitCast(u32, uf);
     i0 += tblsiz / 2;
 
     const k = i0 / tblsiz;
     // NOTE: musl relies on undefined overflow shift behaviour. Appears that this produces the
     // intended result but should confirm how GCC/Clang handle this to ensure.
-    const uk = fmath.bitCast(f64, u64(0x3FF + k) <<% 52);
+    const uk = @bitCast(f64, u64(0x3FF + k) <<% 52);
     i0 &= tblsiz - 1;
     uf -= redux;
 
@@ -352,7 +352,7 @@ fn exp2d(x: f64) -> f64 {
     const P4: f64    = 0x1.3b2ab88f70400p-7;
     const P5: f64    = 0x1.5d88003875c74p-10;
 
-    const ux = fmath.bitCast(u64, x);
+    const ux = @bitCast(u64, x);
     const ix = u32(ux >> 32) & 0x7FFFFFFF;
 
     // |x| >= 1022 or nan
@@ -385,11 +385,11 @@ fn exp2d(x: f64) -> f64 {
     // reduce x
     var uf = x + redux;
     // NOTE: musl performs an implicit 64-bit to 32-bit u32 truncation here
-    var i0 = @truncate(u32, fmath.bitCast(u64, uf));
+    var i0 = @truncate(u32, @bitCast(u64, uf));
     i0 += tblsiz / 2;
 
     const k: u32 = i0 / tblsiz * tblsiz;
-    const ik = fmath.bitCast(i32, k / tblsiz);
+    const ik = @bitCast(i32, k / tblsiz);
     i0 %= tblsiz;
     uf -= redux;
 

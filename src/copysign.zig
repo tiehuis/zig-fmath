@@ -9,21 +9,21 @@ pub fn copysign(comptime T: type, x: T, y: T) -> T {
 }
 
 fn copysign32(x: f32, y: f32) -> f32 {
-    const ux = fmath.bitCast(u32, x);
-    const uy = fmath.bitCast(u32, y);
+    const ux = @bitCast(u32, x);
+    const uy = @bitCast(u32, y);
 
     const h1 = ux & (@maxValue(u32) / 2);
     const h2 = uy & (u32(1) << 31);
-    fmath.bitCast(f32, h1 | h2)
+    @bitCast(f32, h1 | h2)
 }
 
 fn copysign64(x: f64, y: f64) -> f64 {
-    const ux = fmath.bitCast(u64, x);
-    const uy = fmath.bitCast(u64, y);
+    const ux = @bitCast(u64, x);
+    const uy = @bitCast(u64, y);
 
     const h1 = ux & (@maxValue(u64) / 2);
     const h2 = uy & (u64(1) << 63);
-    fmath.bitCast(f64, h1 | h2)
+    @bitCast(f64, h1 | h2)
 }
 
 test "copysign" {
