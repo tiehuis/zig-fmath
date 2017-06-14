@@ -21,8 +21,7 @@ fn coshf(x: f32) -> f32 {
     // |x| < log(2)
     if (ux < 0x3F317217) {
         if (ux < 0x3F800000 - (12 << 23)) {
-            // TODO: Signal overflow here?
-            // fmath.forceEval(x + 0x1.0p120f);
+            fmath.raiseOverflow();
             return 1.0;
         }
         const t = fmath.expm1(ax);
@@ -47,8 +46,9 @@ fn coshd(x: f64) -> f64 {
     // |x| < log(2)
     if (w < 0x3FE62E42) {
         if (w < 0x3FF00000 - (26 << 20)) {
-            // raise inexact if x != 0
-            fmath.forceEval(x + 0x1.0p120);
+            if (x != 0) {
+                fmath.raiseInexact();
+            }
             return 1.0;
         }
         const t = fmath.expm1(ax);

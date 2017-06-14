@@ -157,7 +157,8 @@ fn expm1d(x_: f64) -> f64 {
             return -1;
         }
         if (x > o_threshold) {
-            return x; // TODO: * 0x1.0p1023;
+            fmath.raiseOverflow();
+            return fmath.nan(f64);
         }
     }
 

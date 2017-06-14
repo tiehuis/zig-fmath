@@ -9,7 +9,7 @@ pub fn ilogb(x: var) -> i32 {
     }
 }
 
-// TODO: Hide these somewhere or expose. Maybe adjust how these are used.
+// NOTE: Should these be exposed publically?
 const fp_ilogbnan = -1 - i32(@maxValue(u32) >> 1);
 const fp_ilogb0 = fp_ilogbnan;
 
@@ -20,7 +20,7 @@ fn ilogb32(x: f32) -> i32 {
     if (e == 0) {
         u <<= 9;
         if (u == 0) {
-            // TODO: fmath.forceEval(0.0 / 0.0);
+            fmath.raiseInvalid();
             return fp_ilogb0;
         }
 
@@ -33,7 +33,7 @@ fn ilogb32(x: f32) -> i32 {
     }
 
     if (e == 0xFF) {
-        // TODO: fmath.forceEval(0.0 / 0.0);
+        fmath.raiseInvalid();
         if (u << 9 != 0) {
             return fp_ilogbnan;
         } else {
@@ -51,7 +51,7 @@ fn ilogb64(x: f64) -> i32 {
     if (e == 0) {
         u <<= 12;
         if (u == 0) {
-            // TODO: fmath.forceEval(0.0 / 0.0);
+            fmath.raiseInvalid();
             return fp_ilogb0;
         }
 
@@ -64,7 +64,7 @@ fn ilogb64(x: f64) -> i32 {
     }
 
     if (e == 0x7FF) {
-        // TODO: fmath.forceEval(0.0 / 0.0);
+        fmath.raiseInvalid();
         if (u << 12 != 0) {
             return fp_ilogbnan;
         } else {

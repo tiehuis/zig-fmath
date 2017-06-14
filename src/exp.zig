@@ -105,10 +105,12 @@ fn exp64(x_: f64) -> f64 {
         if (hx > 0x7FF00000) {
             return x;
         }
-        // TODO: Compare against exact u64 value.
         if (x > 709.782712893383973096) {
             // overflow if x != inf
-            return x; // TODO: * 0x1.0p1023;
+            if (!fmath.isInf(x)) {
+                fmath.raiseOverflow();
+            }
+            return fmath.inf(f64);
         }
         if (x < -708.39641853226410622) {
             // underflow if x != -inf

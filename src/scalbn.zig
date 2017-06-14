@@ -14,7 +14,6 @@ fn scalbn32(x: f32, n_: i32) -> f32 {
     var n = n_;
 
     if (n > 127) {
-        // TODO: Determine how to do the following.
         y *= 0x1.0p127;
         n -= 127;
         if (n > 1023) {

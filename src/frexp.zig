@@ -26,16 +26,19 @@ fn frexp32(x: f32) -> frexp32_result {
 
     if (e == 0) {
         if (x != 0) {
+            // subnormal
             result = frexp32(x * 0x1.0p64);
             result.exponent -= 64;
         } else {
+            // frexp(+-0) = (+-0, 0)
             result.significand = x;
             result.exponent = 0;
         }
         return result;
     } else if (e == 0xFF) {
+        // frexp(nan) = (nan, 0)
         result.significand = x;
-        // TODO: Any worthwhile value to set exponent to in this case?
+        result.exponent = 0;
         return result;
     }
 
@@ -54,14 +57,17 @@ fn frexp64(x: f64) -> frexp64_result {
 
     if (e == 0) {
         if (x != 0) {
+            // subnormal
             result = frexp64(x * 0x1.0p64);
             result.exponent -= 64;
         } else {
+            // frexp(+-0) = (+-0, 0)
             result.significand = x;
             result.exponent = 0;
         }
         return result;
     } else if (e == 0x7FF) {
+        // frexp(nan) = (nan, 0)
         result.significand = x;
         return result;
     }

@@ -67,7 +67,7 @@ fn pow32(x: f32, y: f32) -> f32 {
         }
         // pow(x, +inf) = +0    for |x| < 1
         // pow(x, -inf) = +0    for |x| > 1
-        else if ((fmath.fabs(x) < 1) == fmath.isInf(y)) {
+        else if ((fmath.fabs(x) < 1) == fmath.isPositiveInf(y)) {
             return 0;
         }
         // pow(x, -inf) = +inf  for |x| < 1
@@ -78,8 +78,7 @@ fn pow32(x: f32, y: f32) -> f32 {
     }
 
     if (fmath.isInf(x)) {
-        // TODO: Handle negative inf checks correctly
-        if (fmath.isInf(x)) {
+        if (fmath.isNegativeInf(x)) {
             return pow32(1 / x, -y);
         }
         // pow(+inf, y) = +0    for y < 0
@@ -216,7 +215,6 @@ fn pow64(x: f64, y: f64) -> f64 {
     }
 
     if (fmath.isInf(x)) {
-        // TODO: Handle negative inf checks correctly
         if (fmath.isInf(x)) {
             return pow64(1 / x, -y);
         }

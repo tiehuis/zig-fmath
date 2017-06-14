@@ -22,7 +22,6 @@ fn fma32(x: f32, y: f32, z: f32) -> f32 {
     }
 }
 
-// TODO: How do we want to handle rounding modes.
 fn fma64(x: f64, y: f64, z: f64) -> f64 {
     if (!fmath.isFinite(x) or !fmath.isFinite(y)) {
         return x * y + z;
@@ -48,14 +47,10 @@ fn fma64(x: f64, y: f64, z: f64) -> f64 {
     var zs = x3.significand;
 
     var spread = ex + ey - ez;
-
-    // TODO: Other rounding modes handled edge cases here.
-
     if (spread <= 53 * 2) {
         zs = fmath.scalbn(zs, -spread);
     } else {
-        // TODO: DBL_MIN
-        zs = fmath.copysign(f64, 0.0, zs);
+        zs = fmath.copysign(f64, fmath.f64_min, zs);
     }
 
     const xy = dd_mul(xs, ys);
@@ -65,8 +60,6 @@ fn fma64(x: f64, y: f64, z: f64) -> f64 {
     if (r.hi == 0.0) {
         return xy.hi + zs + fmath.scalbn(xy.lo, spread);
     }
-
-    // TODO: Other rounding modes handled edge cases here.
 
     const adj = add_adjusted(r.lo, xy.lo);
     if (spread + fmath.ilogb(r.hi) > -1023) {

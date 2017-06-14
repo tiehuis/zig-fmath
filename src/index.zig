@@ -66,6 +66,26 @@ pub fn approxEq(comptime T: type, x: T, y: T, epsilon: T) -> bool {
     fabs(x - y) < epsilon
 }
 
+pub fn raiseInvalid() {
+    // Raise INVALID fpu exception
+}
+
+pub fn raiseUnderflow() {
+    // Raise UNDERFLOW fpu exception
+}
+
+pub fn raiseOverflow() {
+    // Raise OVERFLOW fpu exception
+}
+
+pub fn raiseInexact() {
+    // Raise INEXACT fpu exception
+}
+
+pub fn raiseDivByZero() {
+    // Raise INEXACT fpu exception
+}
+
 pub const io = @import("io.zig");
 
 pub const isNan = @import("isnan.zig").isNan;
@@ -84,6 +104,8 @@ pub const modf64_result = @import("modf.zig").modf64_result;
 pub const copysign = @import("copysign.zig").copysign;
 pub const isFinite = @import("isfinite.zig").isFinite;
 pub const isInf = @import("isinf.zig").isInf;
+pub const isPositiveInf = @import("isinf.zig").isPositiveInf;
+pub const isNegativeInf = @import("isinf.zig").isNegativeInf;
 pub const isNormal = @import("isnormal.zig").isNormal;
 pub const signbit = @import("signbit.zig").signbit;
 pub const scalbn = @import("scalbn.zig").scalbn;

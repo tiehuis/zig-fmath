@@ -117,9 +117,8 @@ fn log1pd(x: f64) -> f64 {
         }
         // |x| < 2^(-53)
         if ((hx << 1) < (0x3CA00000 << 1)) {
-            // TODO: underflow if subnormal
             if ((hx & 0x7FF00000) == 0) {
-                // fmath.forceEval(f32(x));
+                fmath.raiseUnderflow();
             }
             return x;
         }

@@ -70,7 +70,7 @@ fn exp2f(x: f32) -> f32 {
     i0 += tblsiz / 2;
 
     const k = i0 / tblsiz;
-    // TODO: musl relies on undefined overflow shift behaviour. Appears that this produces the
+    // NOTE: musl relies on undefined overflow shift behaviour. Appears that this produces the
     // intended result but should confirm how GCC/Clang handle this to ensure.
     const uk = fmath.bitCast(f64, u64(0x3FF + k) <<% 52);
     i0 &= tblsiz - 1;
@@ -359,8 +359,8 @@ fn exp2d(x: f64) -> f64 {
     if (ix >= 0x408FF000) {
         // x >= 1024 or nan
         if (ix >= 0x40900000 and ux >> 63 == 0) {
-            // overflow
-            return x; // TODO: * 0x1.0p1023;
+            fmath.raiseOverflow();
+            return fmath.inf(f64);
         }
         // -inf or -nan
         if (ix >= 0x7FF00000) {
