@@ -49,13 +49,16 @@ pub const inf = @import("inf.zig").inf;
 
 pub fn forceEval(value: var) {
     const T = @typeOf(value);
-    // TODO: Volatile variable declaration?
     switch (T) {
         f32 => {
-            const x: f32 = value;
+            var x: f32 = undefined;
+            const p = @ptrCast(&volatile f32, &x);
+            *p = x;
         },
         f64 => {
-            const x: f64 = value;
+            var x: f64 = undefined;
+            const p = @ptrCast(&volatile f64, &x);
+            *p = x;
         },
         else => {
             @compileError("forceEval not implemented for " ++ @typeName(T));

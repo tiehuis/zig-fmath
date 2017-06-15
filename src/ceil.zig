@@ -1,3 +1,4 @@
+const builtin = @import("builtin");
 const fmath = @import("index.zig");
 
 pub fn ceil(x: var) -> @typeOf(x) {
@@ -48,8 +49,10 @@ fn ceil64(x: f64) -> f64 {
     }
 
     if (u >> 63 != 0) {
+        @setFloatMode(this, builtin.FloatMode.Strict);
         y = x - fmath.f64_toint + fmath.f64_toint - x;
     } else {
+        @setFloatMode(this, builtin.FloatMode.Strict);
         y = x + fmath.f64_toint - fmath.f64_toint - x;
     }
 
